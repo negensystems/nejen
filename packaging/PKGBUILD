@@ -1,0 +1,130 @@
+# Maintainer: Takumi Yamada <takumiyamada14@gmail.com>
+#
+# NEJEN's standard distribution mechanism: a single pacman-owned package
+# built straight from this repo.
+#
+# Usage (local build):
+#
+#   cd packaging
+#   makepkg -si            # build from the repo's git HEAD and install
+#
+# The source is a local git clone (git+file:// of the repo root), so the
+# package always contains the last *committed* state, never a dirty working
+# tree. To smoke-test uncommitted work: copy the repo elsewhere, run
+# `git add -A && git commit` in the copy, then makepkg in copy/packaging.
+# `makepkg --noarchive` builds pkg/ without producing the .pkg.tar for a
+# quick inspection; `makepkg --printsrcinfo` validates the PKGBUILD itself.
+#
+# Versioning: the repo `version` file is the base version ("rolling");
+# pkgver() appends the git revision count + hash so pacman always sees a
+# monotonically increasing version across rebuilds.
+
+pkgname=nejen
+pkgver=rolling
+pkgrel=1
+pkgdesc="Opinionated Arch + Hyprland desktop: one nejen command, declarative themes"
+arch=(x86_64)
+license=(MIT)
+
+# Runtime deps of the NEJEN tooling itself, kept minimal:
+#   bash    the dispatcher and the shell it invokes
+#   git     nejen update / nejen version fallback
+# Everything else the scripts touch either guards with `command -v` or only
+# matters for one subcommand, so it goes to optdepends below.
+#
+# NOTE: the curated desktop application set (hyprland, waybar, walker, all
+# the TUIs, fonts, ...) intentionally does NOT appear in depends. It lives
+# in packages/core.txt, which the installer and the ISO build consume.
+# This package only ships the nejen tooling.
+depends=(bash git)
+makedepends=(git go)
+optdepends=(
+  'zenity: text entry when adding or editing nejen countdown events'
+  'gum: interactive prompts (nejen tz select, nejen update)'
+  'hyprland: hyprctl, used by every window/monitor/theme-reload command'
+  'libnotify: desktop notifications (notify-send) from battery/toggle/capture commands'
+  'walker: launcher used by nejen hub and nejen open launcher'
+  'elephant: menu backend for walker-based menus'
+  'uwsm: session-managed app launching (uwsm-app)'
+  'mako: notification daemon reloaded on nejen theme set'
+  'brightnessctl: display and keyboard brightness commands'
+  'swayosd: on-screen display for brightness and volume changes'
+  'slurp: region selection for screenshots and recordings'
+  'grim: screen capture for the screensaver and screenshots'
+  'satty: screenshot annotation'
+  'hyprpicker: color picker used by nejen hub'
+  'gpu-screen-recorder: nejen screenrecord backend'
+  'wl-clipboard: copy screenshots to the clipboard (wl-copy)'
+  'hyprlock: nejen lock'
+  'hypridle: idle management toggled by nejen idle toggle'
+  'hyprsunset: nejen night toggle'
+  'btop: system activity TUI (nejen open tui btop)'
+  'wiremix: audio controls TUI'
+  'bluetuith: bluetooth manager TUI (nejen open bluetooth --manager)'
+  'bluez-obex: bluetooth file transfer, used by bluetuith'
+)
+
+# Local git source: resolved at PKGBUILD load time to the repo root
+# (the directory above packaging/). Local-build only, by design.
+_repo_root="$(cd "${startdir:-.}/.." && pwd)"
+source=("$pkgname::git+file://${_repo_root}")
+sha256sums=('SKIP')
+
+pkgver() {
+  cd "$srcdir/$pkgname"
+  printf '%s.r%s.g%s' \
+    "$(cat version)" \
+    "$(git rev-list --count HEAD)" \
+    "$(git rev-parse --short HEAD)"
+}
+
+build() {
+  cd "$srcdir/$pkgname"
+
+  # The source is a clean git clone and bin/nejen is gitignored, so the
+  # dispatcher has to be compiled here; package() only installs it.
+  export CGO_ENABLED=0
+  export GOFLAGS="-trimpath -mod=readonly -modcacherw"
+  go build -o bin/nejen ./cmd/nejen
+}
+
+package() {
+  cd "$srcdir/$pkgname"
+
+  # The dispatcher: the only thing on PATH. Installed at /usr/bin/nejen it
+  # resolves NEJEN_PATH=/usr/share/nejen by itself.
+  install -Dm755 bin/nejen "$pkgdir/usr/bin/nejen"
+
+  # Support files, owned and tracked by pacman.
+  local share="$pkgdir/usr/share/nejen"
+  install -d "$share"
+  cp -r config themes templates packages install "$share/"
+  install -m644 logo.txt icon.txt version "$share/"
+
+  # Never ship interpreter caches.
+  find "$share" -depth -type d -name __pycache__ -exec rm -rf {} +
+
+  # Plymouth boot splash, pacman-owned at the path plymouthd looks in.
+  # (install/first-run/boot-theme.sh wires it into plymouthd + mkinitcpio.)
+  install -d "$pkgdir/usr/share/plymouth/themes"
+  cp -r config/plymouth/nejen "$pkgdir/usr/share/plymouth/themes/nejen"
+
+  # Pacman hooks
+  install -d "$pkgdir/usr/share/libalpm/hooks"
+  install -m644 system/hooks/*.hook "$pkgdir/usr/share/libalpm/hooks/"
+
+  # Bash completion.
+  install -Dm644 completions/nejen.bash \
+    "$pkgdir/usr/share/bash-completion/completions/nejen"
+
+  # systemd user units. The shipped unit points at the dev-mode dispatcher
+  # path; the packaged install uses /usr/bin/nejen.
+  install -d "$pkgdir/usr/lib/systemd/user"
+  local unit
+  for unit in config/systemd/user/*; do
+    sed 's|^ExecStart=.*/nejen |ExecStart=/usr/bin/nejen |' "$unit" \
+      >"$pkgdir/usr/lib/systemd/user/${unit##*/}"
+  done
+
+  install -Dm644 LICENSE "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
+}

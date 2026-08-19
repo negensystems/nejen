@@ -1,0 +1,57 @@
+// ${meta.name} -- bluetuith config, written by `nejen theme render`.
+//
+// HJSON, which is what bluetuith parses (koanf/hjson). Comments are legal
+// here; trailing commas are not required.
+//
+// Mapping philosophy matches the rest of the theme engine: chrome (borders,
+// menu bar, property labels) stays on the quiet border/muted tones, live
+// state rides the accent, and only genuine failure states go red. A
+// connected device is accent-colored for the same reason an active waybar
+// workspace is -- "this one is live" should read the same everywhere.
+//
+// `Background` and `MenuBar` are deliberately `transparent` so the panel
+// inherits the terminal's background, which the theme engine already renders
+// into Alacritty (and which keeps its transparency). Note that `transparent`
+// is the input bluetuith accepts -- it maps it to its internal `default`
+// itself, and passing `default` here is rejected as an invalid color.
+{
+  theme: {
+    // Base surfaces and text
+    Text: "${palette.foreground}"
+    Border: "${palette.border}"
+    Background: "transparent"
+    StatusInfo: "${palette.foreground}"
+    StatusError: "${palette.error}"
+
+    // Adapter state. Powered rides the accent; the discoverable/scanning/
+    // pairable trio are transient modes, so they take the secondary hues
+    // rather than competing with the accent.
+    Adapter: "${palette.foreground}"
+    AdapterPowered: "${palette.accent}"
+    AdapterNotPowered: "${palette.error}"
+    AdapterDiscoverable: "${palette.cyan}"
+    AdapterScanning: "${palette.warning}"
+    AdapterPairable: "${palette.magenta}"
+
+    // Devices. Connected is the one state worth spotting from across the
+    // room, so it gets the accent; discovered-but-unpaired stays muted
+    // until you act on it.
+    Device: "${palette.foreground}"
+    DeviceType: "${palette.muted}"
+    DeviceAlias: "${palette.foreground}"
+    DeviceConnected: "${palette.accent}"
+    DeviceDiscovered: "${palette.muted}"
+    DeviceProperty: "${palette.muted}"
+    DevicePropertyConnected: "${palette.accent}"
+    DevicePropertyDiscovered: "${palette.warning}"
+
+    // Menus
+    Menu: "${palette.foreground}"
+    MenuBar: "transparent"
+    MenuItem: "${palette.foreground}"
+
+    // Transfer progress
+    ProgressBar: "${palette.accent}"
+    ProgressText: "${palette.foreground}"
+  }
+}

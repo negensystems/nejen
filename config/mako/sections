@@ -1,0 +1,6 @@
+# NEJEN mako [criteria] sections - concatenated AFTER all global options
+# (mako rejects global options that appear after a section, so these must
+# always come last in the generated ~/.config/mako/config).
+
+[mode=do-not-disturb]
+invisible=1

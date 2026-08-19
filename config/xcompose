@@ -1,0 +1,57 @@
+# NEJEN compose sequences.
+#
+# This file is pulled in from ~/.XCompose via:
+#
+#   include "%H/.local/share/nejen/config/xcompose"
+#
+# Add your own sequences straight to ~/.XCompose; anything defined there
+# after the include wins over these defaults.
+
+# Keep the full locale compose table - NEJEN only layers extras on top.
+include "%L"
+
+# ── Typography ──────────────────────────────────────────────────────────
+<Multi_key> <period> <period>                 : "…"   U2026  # ellipsis
+<Multi_key> <minus> <minus> <minus>           : "—"   U2014  # em dash
+<Multi_key> <minus> <minus> <period>          : "–"   U2013  # en dash
+<Multi_key> <period> <minus>                  : "·"   U00B7  # middle dot
+<Multi_key> <asterisk> <asterisk>             : "•"   U2022  # bullet
+<Multi_key> <exclam> <exclam>                 : "‽"   U203D  # interrobang
+
+# ── Arrows ──────────────────────────────────────────────────────────────
+<Multi_key> <minus> <greater>                 : "→"   U2192
+<Multi_key> <less> <minus>                    : "←"   U2190
+<Multi_key> <bar> <asciicircum>               : "↑"   U2191
+<Multi_key> <bar> <v>                         : "↓"   U2193
+<Multi_key> <less> <greater>                  : "↔"   U2194
+<Multi_key> <equal> <greater>                 : "⇒"   U21D2
+<Multi_key> <equal> <less>                    : "⇐"   U21D0
+
+# ── Math & science ──────────────────────────────────────────────────────
+<Multi_key> <x> <x>                           : "×"   U00D7  # multiply
+<Multi_key> <colon> <minus>                   : "÷"   U00F7  # divide
+<Multi_key> <plus> <minus>                    : "±"   U00B1
+<Multi_key> <slash> <equal>                   : "≠"   U2260
+<Multi_key> <asciitilde> <asciitilde>         : "≈"   U2248
+<Multi_key> <less> <equal>                    : "≤"   U2264
+<Multi_key> <greater> <equal>                 : "≥"   U2265
+<Multi_key> <8> <8>                           : "∞"   U221E
+<Multi_key> <o> <o>                           : "°"   U00B0  # degree
+<Multi_key> <m> <u>                           : "µ"   U00B5  # micro
+<Multi_key> <d> <e> <l>                       : "∆"   U2206  # delta
+
+# ── Currency ────────────────────────────────────────────────────────────
+<Multi_key> <e> <equal>                       : "€"   U20AC
+<Multi_key> <l> <minus>                       : "£"   U00A3
+<Multi_key> <y> <equal>                       : "¥"   U00A5
+<Multi_key> <c> <bar>                         : "¢"   U00A2
+<Multi_key> <r> <equal>                       : "₹"   U20B9
+<Multi_key> <b> <b>                           : "₿"   U20BF
+
+# ── Marks & signs ───────────────────────────────────────────────────────
+<Multi_key> <o> <c>                           : "©"   U00A9
+<Multi_key> <o> <r>                           : "®"   U00AE
+<Multi_key> <t> <m>                           : "™"   U2122
+<Multi_key> <o> <k>                           : "✓"   U2713  # check
+<Multi_key> <n> <o>                           : "✗"   U2717  # cross
+<Multi_key> <s> <o>                           : "§"   U00A7  # section

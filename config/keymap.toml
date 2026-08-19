@@ -1,0 +1,588 @@
+# NEJEN default keymap.
+#
+# This file is the single source of truth for every shipped keybinding.
+# `nejen keymap render` turns it into Hyprland bind lines; `nejen keys`
+# shows it as the searchable key reference. Rebind keys by writing
+# ~/.config/nejen/keymap.toml (same schema): a [[bind]] with the same
+# `keys` replaces the default, new chords are added, and
+# `unbind = ["super+x"]` removes a default outright.
+#
+# The scheme, in one breath: Super+key acts on the focused window or a
+# core app; Shift strengthens or inverts; Ctrl reaches the less common
+# variant; Super+N is NEJEN's hub for everything that has no key.
+
+# ── Apps ────────────────────────────────────────────────────────────────
+
+[[bind]]
+keys = "super+return"
+desc = "Terminal (in current project dir)"
+run = "uwsm-app -- xdg-terminal-exec --dir=\"$(nejen terminal cwd)\""
+group = "apps"
+
+[[bind]]
+keys = "super+alt+return"
+desc = "Terminal with tmux"
+run = "uwsm-app -- xdg-terminal-exec --dir=\"$(nejen terminal cwd)\" tmux new"
+group = "apps"
+
+[[bind]]
+keys = "super+space"
+desc = "App launcher"
+run = "nejen open launcher"
+group = "apps"
+
+[[bind]]
+keys = "super+period"
+desc = "Emoji picker"
+run = "nejen open launcher -m symbols"
+group = "apps"
+
+[[bind]]
+keys = "super+shift+b"
+desc = "Browser"
+run = "nejen open browser"
+group = "apps"
+
+[[bind]]
+keys = "super+shift+alt+b"
+desc = "Browser (private window)"
+run = "nejen open browser --private"
+group = "apps"
+
+[[bind]]
+keys = "super+shift+e"
+desc = "Editor"
+run = "nejen open editor"
+group = "apps"
+
+[[bind]]
+keys = "super+shift+t"
+desc = "System activity (btop)"
+run = "nejen open tui btop"
+group = "apps"
+
+# ── Clipboard ───────────────────────────────────────────────────────────
+#
+# Ctrl+C means SIGINT in a terminal, so no single chord copies everywhere.
+# `nejen clip` gives Super+C/Super+V that meaning instead: it replays the
+# chord the focused window understands (Ctrl+Shift in terminals, plain
+# Ctrl elsewhere) into that window.
+
+[[bind]]
+keys = "super+c"
+desc = "Copy"
+run = "nejen clip copy"
+group = "clipboard"
+
+[[bind]]
+keys = "super+v"
+desc = "Paste"
+run = "nejen clip paste"
+group = "clipboard"
+
+[[bind]]
+keys = "super+ctrl+v"
+desc = "Clipboard history"
+run = "nejen open launcher -m clipboard"
+group = "clipboard"
+
+# ── Hub & session ───────────────────────────────────────────────────────
+
+[[bind]]
+keys = "super+n"
+desc = "NEJEN hub"
+run = "nejen hub"
+group = "hub"
+
+[[bind]]
+keys = "super+shift+n"
+desc = "Session menu (lock/logout/power)"
+run = "nejen hub session"
+group = "hub"
+
+[[bind]]
+keys = "XF86PowerOff"
+desc = "Session menu"
+run = "nejen hub session"
+flags = "l"
+group = "hub"
+
+[[bind]]
+keys = "super+/"
+desc = "Key reference"
+run = "nejen keys"
+group = "hub"
+
+[[bind]]
+keys = "ctrl+escape"
+desc = "Lock screen"
+run = "nejen lock"
+group = "hub"
+
+# ── Windows ─────────────────────────────────────────────────────────────
+
+[[bind]]
+keys = "super+q"
+desc = "Close window"
+action = "killactive"
+group = "windows"
+
+[[bind]]
+keys = "super+h"
+desc = "Focus left"
+action = "movefocus l"
+group = "windows"
+
+[[bind]]
+keys = "super+j"
+desc = "Focus down"
+action = "movefocus d"
+group = "windows"
+
+[[bind]]
+keys = "super+k"
+desc = "Focus up"
+action = "movefocus u"
+group = "windows"
+
+[[bind]]
+keys = "super+l"
+desc = "Focus right"
+action = "movefocus r"
+group = "windows"
+
+[[bind]]
+keys = "super+shift+h"
+desc = "Move window left"
+action = "movewindow l"
+group = "windows"
+
+[[bind]]
+keys = "super+shift+j"
+desc = "Move window down"
+action = "movewindow d"
+group = "windows"
+
+[[bind]]
+keys = "super+shift+k"
+desc = "Move window up"
+action = "movewindow u"
+group = "windows"
+
+[[bind]]
+keys = "super+shift+l"
+desc = "Move window right"
+action = "movewindow r"
+group = "windows"
+
+[[bind]]
+keys = "super+ctrl+h"
+desc = "Shrink window horizontally"
+action = "resizeactive -60 0"
+flags = "e"
+group = "windows"
+
+[[bind]]
+keys = "super+ctrl+l"
+desc = "Grow window horizontally"
+action = "resizeactive 60 0"
+flags = "e"
+group = "windows"
+
+[[bind]]
+keys = "super+ctrl+k"
+desc = "Shrink window vertically"
+action = "resizeactive 0 -60"
+flags = "e"
+group = "windows"
+
+[[bind]]
+keys = "super+ctrl+j"
+desc = "Grow window vertically"
+action = "resizeactive 0 60"
+flags = "e"
+group = "windows"
+
+[[bind]]
+keys = "super+f"
+desc = "Fullscreen"
+action = "fullscreen"
+group = "windows"
+
+[[bind]]
+keys = "super+shift+f"
+desc = "Maximize (keep bar)"
+action = "fullscreen 1"
+group = "windows"
+
+[[bind]]
+keys = "super+t"
+desc = "Toggle floating"
+action = "togglefloating"
+group = "windows"
+
+[[bind]]
+keys = "super+u"
+desc = "Detach window (pinned float)"
+run = "nejen win detach"
+group = "windows"
+
+[[bind]]
+keys = "super+g"
+desc = "Toggle gaps"
+run = "nejen win gaps"
+group = "windows"
+
+[[bind]]
+keys = "super+y"
+desc = "Toggle tiling layout"
+run = "nejen win layout"
+group = "windows"
+
+[[bind]]
+keys = "super+o"
+desc = "Square aspect for lone window"
+run = "nejen win square"
+group = "windows"
+
+[[bind]]
+keys = "super+mouse:272"
+desc = "Drag window"
+action = "movewindow"
+flags = "m"
+group = "windows"
+
+[[bind]]
+keys = "super+mouse:273"
+desc = "Resize window"
+action = "resizewindow"
+flags = "m"
+group = "windows"
+
+# ── Workspaces ──────────────────────────────────────────────────────────
+
+[[bind]]
+keys = "super+1"
+desc = "Workspace 1"
+action = "workspace 1"
+group = "workspaces"
+
+[[bind]]
+keys = "super+2"
+desc = "Workspace 2"
+action = "workspace 2"
+group = "workspaces"
+
+[[bind]]
+keys = "super+3"
+desc = "Workspace 3"
+action = "workspace 3"
+group = "workspaces"
+
+[[bind]]
+keys = "super+4"
+desc = "Workspace 4"
+action = "workspace 4"
+group = "workspaces"
+
+[[bind]]
+keys = "super+5"
+desc = "Workspace 5"
+action = "workspace 5"
+group = "workspaces"
+
+[[bind]]
+keys = "super+6"
+desc = "Workspace 6"
+action = "workspace 6"
+group = "workspaces"
+
+[[bind]]
+keys = "super+7"
+desc = "Workspace 7"
+action = "workspace 7"
+group = "workspaces"
+
+[[bind]]
+keys = "super+8"
+desc = "Workspace 8"
+action = "workspace 8"
+group = "workspaces"
+
+[[bind]]
+keys = "super+9"
+desc = "Workspace 9"
+action = "workspace 9"
+group = "workspaces"
+
+[[bind]]
+keys = "super+0"
+desc = "Workspace 10"
+action = "workspace 10"
+group = "workspaces"
+
+[[bind]]
+keys = "super+shift+1"
+desc = "Send to workspace 1"
+action = "movetoworkspace 1"
+group = "workspaces"
+
+[[bind]]
+keys = "super+shift+2"
+desc = "Send to workspace 2"
+action = "movetoworkspace 2"
+group = "workspaces"
+
+[[bind]]
+keys = "super+shift+3"
+desc = "Send to workspace 3"
+action = "movetoworkspace 3"
+group = "workspaces"
+
+[[bind]]
+keys = "super+shift+4"
+desc = "Send to workspace 4"
+action = "movetoworkspace 4"
+group = "workspaces"
+
+[[bind]]
+keys = "super+shift+5"
+desc = "Send to workspace 5"
+action = "movetoworkspace 5"
+group = "workspaces"
+
+[[bind]]
+keys = "super+shift+6"
+desc = "Send to workspace 6"
+action = "movetoworkspace 6"
+group = "workspaces"
+
+[[bind]]
+keys = "super+shift+7"
+desc = "Send to workspace 7"
+action = "movetoworkspace 7"
+group = "workspaces"
+
+[[bind]]
+keys = "super+shift+8"
+desc = "Send to workspace 8"
+action = "movetoworkspace 8"
+group = "workspaces"
+
+[[bind]]
+keys = "super+shift+9"
+desc = "Send to workspace 9"
+action = "movetoworkspace 9"
+group = "workspaces"
+
+[[bind]]
+keys = "super+shift+0"
+desc = "Send to workspace 10"
+action = "movetoworkspace 10"
+group = "workspaces"
+
+[[bind]]
+keys = "super+tab"
+desc = "Previous workspace"
+action = "workspace previous"
+group = "workspaces"
+
+[[bind]]
+keys = "super+]"
+desc = "Next workspace"
+action = "workspace e+1"
+group = "workspaces"
+
+[[bind]]
+keys = "super+["
+desc = "Previous workspace (cycle)"
+action = "workspace e-1"
+group = "workspaces"
+
+[[bind]]
+keys = "super+mouse_down"
+desc = "Next workspace (scroll)"
+action = "workspace e+1"
+group = "workspaces"
+
+[[bind]]
+keys = "super+mouse_up"
+desc = "Previous workspace (scroll)"
+action = "workspace e-1"
+group = "workspaces"
+
+# ── Capture ─────────────────────────────────────────────────────────────
+
+[[bind]]
+keys = "print"
+desc = "Screenshot (select region)"
+run = "nejen screenshot"
+group = "capture"
+
+[[bind]]
+keys = "shift+print"
+desc = "Screenshot (whole screen)"
+run = "nejen screenshot fullscreen"
+group = "capture"
+
+[[bind]]
+keys = "super+print"
+desc = "Screenshot (window)"
+run = "nejen screenshot windows"
+group = "capture"
+
+[[bind]]
+keys = "super+r"
+desc = "Screen record toggle"
+run = "nejen screenrecord"
+group = "capture"
+
+[[bind]]
+keys = "super+shift+r"
+desc = "Screen record stop"
+run = "nejen screenrecord --stop"
+group = "capture"
+
+[[bind]]
+keys = "super+ctrl+p"
+desc = "Color picker"
+run = "pkill hyprpicker || hyprpicker -a"
+group = "capture"
+
+# ── Hardware keys ───────────────────────────────────────────────────────
+
+[[bind]]
+keys = "XF86AudioRaiseVolume"
+desc = "Volume up"
+run = "swayosd-client --output-volume raise"
+flags = "el"
+group = "hardware"
+
+[[bind]]
+keys = "XF86AudioLowerVolume"
+desc = "Volume down"
+run = "swayosd-client --output-volume lower"
+flags = "el"
+group = "hardware"
+
+[[bind]]
+keys = "XF86AudioMute"
+desc = "Mute"
+run = "swayosd-client --output-volume mute-toggle"
+flags = "l"
+group = "hardware"
+
+[[bind]]
+keys = "XF86AudioMicMute"
+desc = "Mute microphone"
+run = "swayosd-client --input-volume mute-toggle"
+flags = "l"
+group = "hardware"
+
+[[bind]]
+keys = "XF86AudioPlay"
+desc = "Play / pause"
+run = "playerctl play-pause"
+flags = "l"
+group = "hardware"
+
+[[bind]]
+keys = "XF86AudioNext"
+desc = "Next track"
+run = "playerctl next"
+flags = "l"
+group = "hardware"
+
+[[bind]]
+keys = "XF86AudioPrev"
+desc = "Previous track"
+run = "playerctl previous"
+flags = "l"
+group = "hardware"
+
+[[bind]]
+keys = "XF86MonBrightnessUp"
+desc = "Screen brightness up"
+run = "swayosd-client --brightness raise"
+flags = "el"
+group = "hardware"
+
+[[bind]]
+keys = "XF86MonBrightnessDown"
+desc = "Screen brightness down"
+run = "swayosd-client --brightness lower"
+flags = "el"
+group = "hardware"
+
+[[bind]]
+keys = "XF86KbdLightOnOff"
+desc = "Cycle keyboard backlight"
+run = "nejen brightness keyboard cycle"
+group = "hardware"
+
+[[bind]]
+keys = "Caps_Lock"
+desc = "Caps lock indicator"
+run = "swayosd-client --caps-lock"
+flags = "r"
+group = "hardware"
+
+# ── Notifications ───────────────────────────────────────────────────────
+
+[[bind]]
+keys = "super+d"
+desc = "Dismiss notification"
+run = "makoctl dismiss"
+group = "notifications"
+
+[[bind]]
+keys = "super+shift+d"
+desc = "Dismiss all notifications"
+run = "makoctl dismiss --all"
+group = "notifications"
+
+[[bind]]
+keys = "super+ctrl+d"
+desc = "Do not disturb"
+run = "nejen dnd toggle"
+group = "notifications"
+
+# ── Toggles ─────────────────────────────────────────────────────────────
+
+[[bind]]
+keys = "super+b"
+desc = "Toggle bar"
+run = "nejen bar toggle"
+group = "toggles"
+
+[[bind]]
+keys = "super+w"
+desc = "Toggle nightlight (warmth)"
+run = "nejen night toggle"
+group = "toggles"
+
+[[bind]]
+keys = "super+i"
+desc = "Toggle idle lock (caffeine)"
+run = "nejen idle toggle"
+group = "toggles"
+
+# ── Theme ───────────────────────────────────────────────────────────────
+
+[[bind]]
+keys = "super+shift+w"
+desc = "Wallpaper picker"
+run = "nejen theme bg pick"
+group = "theme"
+
+[[bind]]
+keys = "super+ctrl+w"
+desc = "Next wallpaper"
+run = "nejen theme bg next"
+group = "theme"
+
+[[bind]]
+keys = "super+ctrl+shift+w"
+desc = "Previous wallpaper"
+run = "nejen theme bg prev"
+group = "theme"

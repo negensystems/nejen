@@ -1,0 +1,14 @@
+# NEJEN swayosd defaults.
+#
+# Styling is deliberately NOT pointed at here: swayosd-server falls back to
+# ~/.config/swayosd/style.css, which the installer generates as a thin file
+# @importing (in order) the rendered theme css from
+# ~/.local/state/nejen/theme/swayosd.css, this repo's style.css, and the
+# user's overrides.css - so the last import always wins.
+
+[server]
+# Print the numeric value next to the bar instead of a bar alone.
+show_percentage = true
+
+# Hard-cap volume at 100%; loudness beyond that is an app decision.
+max_volume = 100

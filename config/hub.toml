@@ -1,0 +1,103 @@
+# The NEJEN hub (Super+N).
+#
+# One menu for everything that has no dedicated key. The hub is data:
+# `nejen hub` walks this file and drives the picker; it contains no
+# hardcoded menu logic. Add or reshape entries here, or overlay your own
+# hub at ~/.config/nejen/hub.toml (a [menu.<name>] with the same name
+# replaces the shipped one; new menus are added).
+#
+# Item forms:
+#   { label, run }                 run a command
+#   { label, menu }                unfold [menu.<name>] in place, tree-style
+#   { label, run, confirm = true } ask before running
+#   { label, each, run }           unfold in place: run `each`, one item per
+#                                  output line, "{}" in `run` is the line
+
+[menu.root]
+title = "NEJEN"
+items = [
+  { label = "Theme", menu = "theme" },
+  { label = "Capture", menu = "capture" },
+  { label = "Toggles", menu = "toggles" },
+  { label = "Displays", menu = "displays" },
+  { label = "Connect", menu = "connect" },
+  { label = "Keys", run = "nejen keys" },
+  { label = "Update", run = "nejen open tui nejen update" },
+  { label = "Doctor", run = "nejen open tui nejen doctor" },
+  { label = "About", run = "nejen open about" },
+  { label = "Session", menu = "session" },
+]
+
+[menu.theme]
+title = "Theme"
+items = [
+  { label = "Pick theme", each = "nejen theme list", run = "nejen theme set {}" },
+  { label = "Wallpaper", menu = "wallpaper" },
+]
+
+[menu.wallpaper]
+title = "Wallpaper"
+items = [
+  { label = "Browse wallpapers (with preview)", run = "nejen theme bg pick" },
+  # {} is substituted verbatim, so the quotes here are what keep multi-word
+  # wallpaper names ("Misty Ridge") from arriving as two arguments.
+  { label = "Choose from list", each = "nejen theme bg list --names", run = "nejen theme bg set '{}'" },
+  { label = "Next", run = "nejen theme bg next" },
+  { label = "Previous", run = "nejen theme bg prev" },
+  { label = "Random", run = "nejen theme bg random" },
+  { label = "Open wallpaper folder", run = "xdg-open \"$(nejen theme bg dir)\"" },
+]
+
+[menu.capture]
+title = "Capture"
+items = [
+  { label = "Screenshot region", run = "nejen screenshot region" },
+  { label = "Screenshot window", run = "nejen screenshot windows" },
+  { label = "Screenshot screen", run = "nejen screenshot fullscreen" },
+  { label = "Record screen", run = "nejen screenrecord" },
+  { label = "Record with audio", run = "nejen screenrecord --audio=system" },
+  { label = "Stop recording", run = "nejen screenrecord --stop" },
+  { label = "Color picker", run = "hyprpicker -a" },
+]
+
+[menu.toggles]
+title = "Toggles"
+items = [
+  { label = "Bar", run = "nejen bar toggle" },
+  { label = "Nightlight", run = "nejen night toggle" },
+  { label = "Idle lock (caffeine)", run = "nejen idle toggle" },
+  { label = "Do not disturb", run = "nejen dnd toggle" },
+  { label = "Gaps", run = "nejen win gaps" },
+  { label = "Tiling layout", run = "nejen win layout" },
+]
+
+[menu.displays]
+title = "Displays"
+items = [
+  { label = "Cycle scaling", run = "nejen display scale" },
+  { label = "Screensaver now", run = "nejen screensaver show" },
+]
+
+[menu.connect]
+title = "Connect"
+items = [
+  { label = "Wi-Fi", run = "nejen open wifi" },
+  { label = "Wi-Fi settings", run = "nejen open wifi --manager" },
+  { label = "Bluetooth", run = "nejen open bluetooth" },
+  { label = "Audio", run = "nejen open audio" },
+  { label = "Audio mixer", run = "nejen open audio --mixer" },
+  { label = "Switch audio output", run = "nejen audio switch" },
+  { label = "Timezone", run = "nejen open tui nejen tz select" },
+]
+
+[menu.session]
+title = "Session"
+items = [
+  { label = "Lock", run = "nejen lock" },
+  { label = "Screensaver", run = "nejen screensaver show" },
+  { label = "Suspend", run = "systemctl suspend", confirm = true },
+  { label = "Relaunch Hyprland", run = "hyprctl dispatch exit", confirm = true },
+  { label = "Log out", run = "nejen system logout", confirm = true },
+  { label = "Reboot", run = "nejen system reboot", confirm = true },
+  { label = "Power off", run = "nejen system shutdown", confirm = true },
+]

@@ -1,0 +1,60 @@
+# ${meta.name} -- Alacritty colors, written by `nejen theme render`.
+#
+# ANSI slots carry NEJEN's semantic palette (see themes/*/theme.toml):
+#   0 black   = background      4 blue    = border
+#   1 red     = error           5 magenta = magenta
+#   2 green   = accent          6 cyan    = cyan
+#   3 yellow  = warning         7 white   = foreground
+# The bright row repeats the normal row, except bright black = muted.
+
+[colors.primary]
+background = "${palette.background}"
+foreground = "${palette.foreground}"
+
+[colors.cursor]
+cursor = "${palette.cursor}"
+text = "${palette.background}"
+
+[colors.vi_mode_cursor]
+cursor = "${palette.accent}"
+text = "${palette.background}"
+
+[colors.selection]
+background = "${palette.selection_background}"
+text = "${palette.selection_foreground}"
+
+[colors.search.matches]
+background = "${palette.warning}"
+foreground = "${palette.background}"
+
+[colors.search.focused_match]
+background = "${palette.accent}"
+foreground = "${palette.background}"
+
+[colors.hints.start]
+background = "${palette.warning}"
+foreground = "${palette.background}"
+
+[colors.hints.end]
+background = "${palette.muted}"
+foreground = "${palette.background}"
+
+[colors.normal]
+black = "${palette.background}"
+red = "${palette.error}"
+green = "${palette.accent}"
+yellow = "${palette.warning}"
+blue = "${palette.border}"
+magenta = "${palette.magenta}"
+cyan = "${palette.cyan}"
+white = "${palette.foreground}"
+
+[colors.bright]
+black = "${palette.muted}"
+red = "${palette.error}"
+green = "${palette.accent}"
+yellow = "${palette.warning}"
+blue = "${palette.border}"
+magenta = "${palette.magenta}"
+cyan = "${palette.cyan}"
+white = "${palette.foreground}"

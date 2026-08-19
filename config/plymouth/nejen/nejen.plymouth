@@ -1,0 +1,14 @@
+[Plymouth Theme]
+Name=NEJEN
+Description=NEJEN boot splash: the waybar panel chrome around the NEJEN wordmark, with the encrypted-disk prompt in matching slate blue
+ModuleName=script
+
+# Not read by script.so -- this is how mkinitcpio's plymouth hook decides which
+# font to embed in the initramfs (as /usr/share/fonts/Plymouth.ttf). Without it
+# the hook falls back to fc-match's default and the passphrase prompt is set in
+# whatever that happens to be; naming it pins the prompt to the desktop's face.
+Font=CaskaydiaMono Nerd Font 12
+
+[script]
+ImageDir=/usr/share/plymouth/themes/nejen
+ScriptFile=/usr/share/plymouth/themes/nejen/nejen.script

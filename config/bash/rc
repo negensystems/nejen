@@ -1,0 +1,32 @@
+# NEJEN bash layer - entry point.
+#
+# The installer drops one guarded line into ~/.bashrc:
+#
+#   source ~/.local/share/nejen/config/bash/rc
+#
+# so this file (and everything it pulls in) ships with NEJEN and is replaced
+# on update. Put personal tweaks in ~/.config/nejen/bash-overrides instead;
+# it is sourced at the very end and therefore always wins.
+
+_nejen_bash="$(cd "${BASH_SOURCE[0]%/*}" && pwd)"
+
+# Load order matters: environment first, then shell behaviour, then the
+# alias/function surface, and tool hooks (prompt, zoxide, mise, fzf) last so
+# they see the finished environment.
+source "$_nejen_bash/envs"
+source "$_nejen_bash/shell"
+source "$_nejen_bash/aliases"
+source "$_nejen_bash/functions"
+source "$_nejen_bash/init"
+
+# Readline tweaks only make sense (and only work) in interactive shells.
+case $- in
+  *i*) bind -f "$_nejen_bash/inputrc" ;;
+esac
+
+unset _nejen_bash
+
+# Personal layer - never touched by NEJEN updates, always sourced last.
+if [[ -r "$HOME/.config/nejen/bash-overrides" ]]; then
+  source "$HOME/.config/nejen/bash-overrides"
+fi

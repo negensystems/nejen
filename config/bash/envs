@@ -1,0 +1,31 @@
+# NEJEN bash layer - session environment.
+#
+# A uwsm-launched Hyprland session already gets NEJEN_PATH and the PATH entry
+# from config/uwsm/env, but plain SSH logins and TTY shells never pass through
+# uwsm - so the same setup is repeated here, guarded against double insertion.
+
+# Resolve the same way the dispatcher does: a dev-mode install lives under
+# ~/.local/share/nejen, a pacman-installed one under /usr/share/nejen. Picking
+# the dev path unconditionally pointed packaged installs at a directory that
+# does not exist.
+if [[ -z "${NEJEN_PATH:-}" ]]; then
+  if [[ -d "$HOME/.local/share/nejen" ]]; then
+    export NEJEN_PATH="$HOME/.local/share/nejen"
+  else
+    export NEJEN_PATH=/usr/share/nejen
+  fi
+fi
+
+# A packaged install puts the dispatcher on PATH at /usr/bin/nejen already;
+# only the dev-mode tree keeps it under NEJEN_PATH/bin.
+if [[ -d "$NEJEN_PATH/bin" && ":$PATH:" != *":$NEJEN_PATH/bin:"* ]]; then
+  export PATH="$NEJEN_PATH/bin:$PATH"
+fi
+
+# Editor defaults for shells that skipped the uwsm session env.
+export EDITOR="${EDITOR:-nvim}"
+export SUDO_EDITOR="$EDITOR"
+
+# Let bat render with the terminal's own ANSI palette, so previews follow the
+# active NEJEN theme instead of a hardcoded colorscheme.
+export BAT_THEME=ansi

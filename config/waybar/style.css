@@ -1,0 +1,239 @@
+@define-color nejen_amber #4a4f8a;
+@define-color nejen_orange #7f87df;
+@define-color nejen_cyan #4a4f8a;
+@define-color nejen_green #7f87df;
+@define-color nejen_red #b35461;
+@define-color nejen_fg #c7d0ff;
+@define-color nejen_muted #767ca0;
+@define-color nejen_bg rgba(10, 10, 18, 0.65);
+@define-color nejen_border rgba(74, 79, 138, 0.35);
+@define-color nejen_glow rgba(74, 79, 138, 0.15);
+
+/* Base bar styling. The bar itself paints nothing -- each module carries its
+ * own panel (see the module chrome rule below), so the gaps between modules
+ * show the desktop straight through. */
+window#waybar {
+  background: transparent;
+  color: @nejen_amber;
+  border: none;
+  border-radius: 0;
+  margin: 0;
+  min-height: 0;
+  font-family: "CaskaydiaMono Nerd Font", monospace;
+  font-size: 11px;
+  font-weight: bold;
+}
+
+.modules-left {
+  margin-left: 8px;
+}
+
+.modules-right {
+  margin-right: 8px;
+}
+
+/* Module chrome. Every module that renders gets the panel; modules that print
+ * empty text (the indicators, the update flag) stay hidden and take no room. */
+#custom-nejen,
+#workspaces,
+#custom-countdown,
+#custom-weather,
+#clock,
+#custom-update,
+#custom-screenrecording-indicator,
+#custom-idle-indicator,
+#custom-dnd-indicator,
+#custom-voxtype,
+#tray-expander,
+#network,
+#bluetooth,
+#pulseaudio,
+#mpris,
+#battery,
+#cpu {
+  background: @nejen_bg;
+  border: 1px solid @nejen_border;
+  border-radius: 8px;
+  padding: 0 8px;
+  margin: 4px 2px;
+  box-shadow:
+    0 0 12px @nejen_glow,
+    inset 0 0 6px rgba(74, 79, 138, 0.05);
+}
+
+/* Workspaces as target select channels */
+#workspaces button {
+  all: initial;
+  padding: 0 8px;
+  margin: 0 3px;
+  color: @nejen_amber;
+  font-family: "CaskaydiaMono Nerd Font", monospace;
+  font-size: 11px;
+  font-weight: bold;
+  transition: all 0.2s ease-in-out;
+}
+
+#workspaces button.empty {
+  color: rgba(74, 79, 138, 0.45);
+}
+
+#workspaces button.active {
+  color: @nejen_green;
+  text-shadow:
+    0 0 6px rgba(127, 135, 223, 0.8),
+    0 0 12px rgba(127, 135, 223, 0.4);
+  background: rgba(127, 135, 223, 0.08);
+  border-radius: 5px;
+  border: 1px solid rgba(127, 135, 223, 0.35);
+  padding: 0 10px;
+}
+
+#workspaces button:hover {
+  color: @nejen_orange;
+  background: rgba(127, 135, 223, 0.08);
+  border-radius: 5px;
+  border: 1px solid rgba(127, 135, 223, 0.25);
+}
+
+#custom-nejen {
+  font-size: 13px;
+  color: @nejen_orange;
+  text-shadow: 0 0 6px rgba(127, 135, 223, 0.6);
+}
+
+#clock {
+  color: @nejen_orange;
+  text-shadow: 0 0 5px rgba(127, 135, 223, 0.5);
+  font-weight: bold;
+}
+
+#cpu {
+  color: @nejen_amber;
+}
+
+#battery {
+  color: @nejen_amber;
+}
+
+#battery.charging {
+  color: @nejen_green;
+  text-shadow: 0 0 5px rgba(127, 135, 223, 0.5);
+}
+
+#battery.critical {
+  color: @nejen_red;
+  text-shadow: 0 0 6px @nejen_red;
+  animation: blinker 1s linear infinite;
+}
+
+#pulseaudio {
+  color: @nejen_orange;
+  text-shadow: 0 0 5px rgba(127, 135, 223, 0.5);
+}
+
+#pulseaudio.muted {
+  color: @nejen_red;
+}
+
+#mpris {
+  color: @nejen_amber;
+}
+
+#mpris.playing {
+  color: @nejen_green;
+  text-shadow: 0 0 5px rgba(127, 135, 223, 0.5);
+}
+
+#mpris.paused {
+  color: @nejen_amber;
+}
+
+#network {
+  color: @nejen_orange;
+  text-shadow: 0 0 5px rgba(127, 135, 223, 0.5);
+}
+
+#network.disconnected {
+  color: @nejen_red;
+  text-shadow: 0 0 5px rgba(179, 84, 97, 0.5);
+}
+
+#bluetooth {
+  color: @nejen_orange;
+}
+
+#bluetooth.disabled {
+  color: rgba(74, 79, 138, 0.45);
+}
+
+#bluetooth.connected {
+  color: @nejen_green;
+  text-shadow: 0 0 5px rgba(127, 135, 223, 0.5);
+}
+
+#custom-update {
+  color: @nejen_red;
+}
+
+#custom-weather {
+  color: @nejen_orange;
+}
+
+#custom-countdown {
+  color: @nejen_amber;
+}
+
+#custom-countdown.urgent {
+  color: @nejen_red;
+  border-color: @nejen_red;
+  text-shadow: 0 0 5px @nejen_red;
+}
+
+#custom-countdown.today {
+  color: @nejen_green;
+  border-color: @nejen_green;
+  text-shadow: 0 0 5px @nejen_green;
+}
+
+/* Indicators. Each is invisible until its state is on, so these rules
+ * only ever apply to a module that is actually saying something. */
+#custom-screenrecording-indicator.active {
+  color: @nejen_red;
+  text-shadow: 0 0 6px @nejen_red;
+  animation: blinker 1.5s linear infinite;
+}
+
+#custom-idle-indicator.active,
+#custom-dnd-indicator.active {
+  color: @nejen_orange;
+  text-shadow: 0 0 5px rgba(127, 135, 223, 0.5);
+}
+
+#tray {
+  margin-left: 6px;
+}
+
+/* Tooltips. GTK3 gives this widget the CSS *node name* `tooltip`, so the
+ * id form (#tooltip) silently matches nothing -- which is why every tooltip
+ * used to render in stock Adwaita. The label needs its own rule as well:
+ * color and font do not inherit down to it from the tooltip window. */
+tooltip {
+  background: rgba(10, 10, 18, 0.96);
+  border: 1px solid @nejen_border;
+  border-radius: 8px;
+  box-shadow: 0 0 12px @nejen_glow;
+}
+
+tooltip label {
+  color: @nejen_fg;
+  font-family: "CaskaydiaMono Nerd Font", monospace;
+  font-size: 11px;
+  font-weight: bold;
+  padding: 8px 12px;
+}
+
+@keyframes blinker {
+  50% {
+    opacity: 0.3;
+  }
+}

@@ -1,0 +1,172 @@
+# ${meta.name} -- hyprlock lock screen, written by `nejen theme render`.
+#
+# This file is the complete themed lock screen (colors AND layout). It is
+# sourced by $NEJEN_PATH/config/hypr/hyprlock.conf, and users can adjust it
+# afterwards from ~/.config/hypr/hyprlock-overrides.conf.
+#
+# The scene is the desktop's own chrome held still: the wallpaper pushed back
+# under blur, then waybar's panel treatment -- 65% background fill, hairline
+# slate border, accent bloom -- on the two things that matter, the passphrase
+# field and the NEJEN mark. The mark repeats the boot splash's card
+# (config/plymouth/) so lock and boot read as the same machine.
+#
+# hyprlock has no font_weight key; weight comes from pango markup on the text.
+#
+# Sizes and positions below are DEVICE pixels, not logical ones: on a fractional-
+# scaled output hyprlock configures its surface at the pixel size and lays out in
+# that space, so a 200% display wants numbers twice as large as the wiki's
+# examples suggest. These are tuned against 3840x2400.
+
+# Palette
+$text       = rgba(${palette.foreground.nohash}ff)
+$text_muted = rgba(${palette.muted.nohash}ff)
+$accent     = rgba(${palette.accent.nohash}ff)
+$panel      = rgba(${palette.background.nohash}a6)       # background at 65%, as waybar
+$frame      = rgba(${palette.border.nohash}59)       # border at 35%, as waybar
+$frame_lit  = rgba(${palette.border.nohash}8c)       # border at 55%, the live field
+$bloom      = rgba(${palette.border.nohash}26)       # border at 15%, the box-shadow
+$glow       = rgba(${palette.accent.nohash}4d)       # accent at 30%, the text-shadow
+$alert      = rgba(${palette.error.nohash}ff)
+$caps       = rgba(${palette.warning.nohash}ff)
+
+$font = CaskaydiaMono Nerd Font
+$mark = Noto Sans
+
+general {
+    hide_cursor = true
+    ignore_empty_input = true
+    grace = 2
+}
+
+animations {
+    enabled = true
+    bezier = nejen, 0.22, 1, 0.36, 1
+    animation = fadeIn, 1, 4, nejen
+    animation = fadeOut, 1, 4, nejen
+    animation = inputFieldDots, 1, 2, nejen
+}
+
+# Current wallpaper, pushed well back: the panels above are translucent, and
+# they only read as panels against something dimmer than they are.
+background {
+    monitor =
+    path = ~/.local/state/nejen/background
+    color = rgba(${palette.background.nohash}ff)
+    blur_passes = 3
+    blur_size = 7
+    brightness = 0.42
+    contrast = 0.92
+    vibrancy = 0.12
+    vibrancy_darkness = 0.30
+}
+
+# Clock
+label {
+    monitor =
+    text = <span weight="bold">$TIME</span>
+    color = $text
+    font_size = 145
+    font_family = $font
+    halign = center
+    valign = center
+    position = 0, 300
+    shadow_passes = 3
+    shadow_size = 21
+    shadow_color = $glow
+    shadow_boost = 1.2
+}
+
+# Date
+label {
+    monitor =
+    text = cmd[update:60000] date +'%A, %d %B %Y'
+    color = $text_muted
+    font_size = 26
+    font_family = $font
+    halign = center
+    valign = center
+    position = 0, 190
+}
+
+# Who is unlocking
+label {
+    monitor =
+    text = cmd[update:0] echo "<span weight='bold'>$USER@$(hostname)</span>"
+    color = $accent
+    font_size = 22
+    font_family = $font
+    halign = center
+    valign = center
+    position = 0, 86
+    shadow_passes = 2
+    shadow_size = 9
+    shadow_color = $glow
+}
+
+# Passphrase field: a waybar module that takes input. Quiet until touched,
+# accent on success, error red on failure.
+input-field {
+    monitor =
+    size = 570, 88
+    position = 0, -45
+    halign = center
+    valign = center
+
+    font_family = $font
+    font_color = $text
+    inner_color = $panel
+    outer_color = $frame_lit
+    outline_thickness = 3
+    rounding = 15
+
+    placeholder_text = <span foreground="##${palette.muted.nohash}">passphrase</span>
+    dots_size = 0.24
+    dots_spacing = 0.34
+    dots_center = true
+    fade_on_empty = false
+    hide_input = false
+
+    check_color = $accent
+    capslock_color = $caps
+    fail_color = $alert
+    fail_text = <i>$FAIL ($ATTEMPTS)</i>
+    fail_timeout = 1500
+
+    shadow_passes = 2
+    shadow_size = 15
+    shadow_color = $bloom
+}
+
+# NEJEN mark: the boot splash's card, at badge size. The card is bottom-anchored
+# at its lower edge but a label is bottom-anchored at its layout box, which sits
+# lower than the ink -- hence the 40px difference between the two positions (it
+# tracks font size, at roughly 0.73 of it). The
+# card's proportions (2.34:1, ink 76% of the width, cap 39% of the height) are
+# the mark's own, so it reads as the same object as the splash.
+shape {
+    monitor =
+    size = 340, 145
+    color = $panel
+    rounding = 15
+    border_size = 2
+    border_color = $frame
+    halign = center
+    valign = bottom
+    position = 0, 145
+    zindex = 1
+}
+
+label {
+    monitor =
+    text = <span weight="900" letter_spacing="18000">NEJEN</span>
+    color = $text
+    font_size = 45
+    font_family = $mark
+    halign = center
+    valign = bottom
+    position = 0, 185
+    zindex = 2
+    shadow_passes = 2
+    shadow_size = 12
+    shadow_color = $glow
+}

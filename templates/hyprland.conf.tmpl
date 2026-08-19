@@ -1,0 +1,13 @@
+# ${meta.name} -- Hyprland theme colors, written by `nejen theme render`.
+# Sourced by config/hypr/hyprland.conf as ~/.local/state/nejen/theme/hyprland.conf.
+#
+# The two $variables are the stable interface: they stay Hyprland variables
+# (rather than inlined values) so config sourced after this file can reuse them.
+
+$activeBorderColor = rgba(${palette.border.nohash}ff)
+$inactiveBorderColor = ${hyprland.inactive_border}
+
+general {
+    col.active_border = $activeBorderColor
+    col.inactive_border = $inactiveBorderColor
+}

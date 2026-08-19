@@ -1,0 +1,37 @@
+# NEJEN bash layer - everyday shortcuts.
+# Deliberately small: anything more personal belongs in
+# ~/.config/nejen/bash-overrides.
+
+# Listing via eza when installed, with plain-ls fallbacks so the same muscle
+# memory still works in a rescue shell.
+if command -v eza &>/dev/null; then
+  alias ls='eza --group-directories-first --icons=auto'
+  alias ll='eza -l --group-directories-first --icons=auto --git'
+  alias la='ll -a'
+  alias lt='eza --tree --level=2 --icons=auto'
+else
+  alias ll='ls -l --color=auto'
+  alias la='ls -la --color=auto'
+fi
+
+# Colored matches by default.
+alias grep='grep --color=auto'
+
+# Climb the tree without spelling out cd.
+alias ..='cd ..'
+alias ...='cd ../..'
+alias ....='cd ../../..'
+
+# Git, the short way.
+alias g='git'
+alias gs='git status --short --branch'
+alias gcm='git commit -m'
+alias gcam='git commit -a -m'
+
+# Hand a file to whatever the desktop associates with it, without tying up
+# the shell or spamming it with output. (unalias guards against a stale
+# `open` alias from a pre-NEJEN setup breaking the definition.)
+unalias open 2>/dev/null || true
+open() {
+  setsid xdg-open "$@" &>/dev/null
+}

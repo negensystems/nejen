@@ -1,0 +1,315 @@
+# NEJEN boot splash (plymouth script plugin).
+#
+# The desktop's chrome, rebuilt for the framebuffer: the NEJEN wordmark on a
+# waybar-style panel -- 65% slate-black fill, hairline border, soft outer
+# bloom -- over a near-black ground, with a thin accent line that fills as the
+# system comes up. When the encrypted disk asks for its passphrase the line
+# gives way to a second panel of the same chrome that takes the input.
+#
+# The panels and the wordmark are pre-rendered PNGs (config/plymouth/src/
+# render-assets.sh) because inside the initramfs Plymouth's freetype label
+# backend ignores font family, weight and letterspacing; only sizes survive.
+# Text is therefore reserved for the prompt and status lines.
+#
+# Every dimension is a fraction of the reported window, so the scene holds its
+# proportions whether Plymouth reports 1080p or a scaled 4K panel.
+#
+# Palette is themes/nejen/theme.toml as 0..1 floats:
+#   background #08080a  foreground #c7d0ff  accent #7f87df
+#   border     #4a4f8a  muted      #767ca0
+
+Window.SetBackgroundTopColor(0.031, 0.031, 0.039);      # 08080a
+Window.SetBackgroundBottomColor(0.039, 0.039, 0.070);   # 0a0a12
+
+screen.w = Window.GetWidth();
+screen.h = Window.GetHeight();
+screen.x = Window.GetX();
+screen.y = Window.GetY();
+screen.cx = screen.x + screen.w / 2;
+screen.cy = screen.y + screen.h / 2;
+
+mode = Plymouth.GetMode();
+
+# Type scale. Plymouth's script language has no number-to-string conversion,
+# so the font specs cannot be computed from the window height -- they are
+# literals chosen by tier instead. Family is decorative here: inside the
+# initramfs the freetype label backend draws everything with the one embedded
+# face (see Font= in nejen.plymouth) and honours only the size.
+if (screen.h >= 2000) {
+    font.prompt = "Sans 40";
+    font.status = "Sans 30";
+} else {
+    if (screen.h >= 1300) {
+        font.prompt = "Sans 26";
+        font.status = "Sans 20";
+    } else {
+        font.prompt = "Sans 17";
+        font.status = "Sans 13";
+    }
+}
+
+# ---- helpers -----------------------------------------------------------------
+
+# Scale an image to a target width, keeping its aspect.
+fun fit_width (image, width) {
+    return image.Scale(width, Math.Int(image.GetHeight() * width / image.GetWidth()));
+}
+
+# ---- aura --------------------------------------------------------------------
+# waybar's box-shadow at room scale: without it the 65% panels read as flat
+# ink on flat ink. It breathes slowly so the still screen is not quite still.
+
+aura.size = Math.Int(screen.w * 0.62);
+aura.image = Image("aura.png").Scale(aura.size, aura.size);
+aura.sprite = Sprite(aura.image);
+aura.sprite.SetPosition(screen.cx - aura.size / 2, screen.cy - aura.size / 2, 1);
+
+# ---- wordmark card -----------------------------------------------------------
+# logo.png carries transparent margin for its own bloom, so the visible card
+# is ~85% of the sprite. Sit it just above centre, HUD fashion.
+
+logo.image = fit_width(Image("logo.png"), Math.Int(screen.w * 0.34));
+logo.w = logo.image.GetWidth();
+logo.h = logo.image.GetHeight();
+logo.sprite = Sprite(logo.image);
+logo.x = screen.cx - logo.w / 2;
+logo.y = screen.cy - logo.h + Math.Int(screen.h * 0.05);
+logo.sprite.SetPosition(logo.x, logo.y, 10);
+
+# Bottom edge of the drawn card, ignoring the sprite's glow margin.
+card.bottom = logo.y + logo.h - Math.Int(logo.h * 0.145);
+
+# ---- progress line -----------------------------------------------------------
+# Dim slate rail, accent fill, and a soft head riding the end of the fill.
+
+line.w = Math.Int(screen.w * 0.16);
+line.h = Math.Int(screen.h * 0.0022);
+if (line.h < 2) {
+    line.h = 2;
+}
+line.x = screen.cx - line.w / 2;
+line.y = card.bottom + Math.Int(screen.h * 0.075);
+
+track.sprite = Sprite(Image("track.png").Scale(line.w, line.h));
+track.sprite.SetPosition(line.x, line.y, 20);
+track.sprite.SetOpacity(0.45);
+
+fill.source = Image("fill.png");
+fill.sprite = Sprite(fill.source.Scale(1, line.h));
+fill.sprite.SetPosition(line.x, line.y, 21);
+
+head.size = Math.Int(screen.h * 0.018);
+head.image = Image("head.png").Scale(head.size, head.size);
+head.sprite = Sprite(head.image);
+head.sprite.SetPosition(line.x - head.size / 2,
+                        line.y + line.h / 2 - head.size / 2, 22);
+
+fun line_opacity (o) {
+    track.sprite.SetOpacity(o * 0.45);
+    fill.sprite.SetOpacity(o);
+    head.sprite.SetOpacity(o);
+}
+
+# The rail only means something during boot.
+if (mode != "boot") {
+    line_opacity(0);
+}
+
+# ---- passphrase field --------------------------------------------------------
+# Same chrome as the wordmark card, brighter border: this panel is the one
+# asking for something. Built up front and hidden, so the prompt appears
+# instantly rather than after a round of image scaling.
+
+field.image = fit_width(Image("field.png"), Math.Int(screen.w * 0.30));
+field.w = field.image.GetWidth();
+field.h = field.image.GetHeight();
+field.sprite = Sprite(field.image);
+field.x = screen.cx - field.w / 2;
+field.y = card.bottom + Math.Int(screen.h * 0.055);
+field.sprite.SetPosition(field.x, field.y, 25);
+field.sprite.SetOpacity(0);
+# Vertical centre of the drawn panel inside its glow margin.
+field.cy = field.y + field.h / 2;
+# Usable width for bullets, inside the panel's rounded ends.
+field.inner = Math.Int(field.w * 0.72);
+
+bullet.size = Math.Int(field.h * 0.22);
+bullet.image = Image("bullet.png").Scale(bullet.size, bullet.size);
+bullet.gap = Math.Int(bullet.size * 1.65);
+
+caret.h = Math.Int(field.h * 0.34);
+caret.image = fit_width(Image("caret.png"), Math.Int(caret.h * 32 / 160));
+caret.w = caret.image.GetWidth();
+caret.sprite = Sprite(caret.image);
+caret.sprite.SetOpacity(0);
+caret.sprite.SetPosition(screen.cx, field.cy - caret.h / 2, 30);
+
+prompt.sprite = Sprite();
+prompt.sprite.SetOpacity(0);
+
+status = "normal";
+
+# ---- animation ---------------------------------------------------------------
+# One refresh hook drives both the aura's breath and the caret blink; Plymouth
+# calls it at the renderer's frame rate, nominally 50 Hz.
+
+anim.phase = 0;
+anim.tick = 0;
+anim.caret_on = 1;
+
+fun refresh_callback () {
+    global.anim.phase += (2 * Math.Pi / 50) * 0.25;      # ~0.25 Hz
+    aura.sprite.SetOpacity(0.72 + 0.28 * (Math.Cos(anim.phase) + 1) / 2);
+
+    if (status == "normal") {
+        return;
+    }
+
+    # Caret blink, 500 ms each way at the nominal 50 fps.
+    global.anim.tick++;
+    if (anim.tick >= 25) {
+        global.anim.tick = 0;
+        if (anim.caret_on) {
+            global.anim.caret_on = 0;
+        } else {
+            global.anim.caret_on = 1;
+        }
+        caret.sprite.SetOpacity(anim.caret_on);
+    }
+}
+
+Plymouth.SetRefreshFunction(refresh_callback);
+
+# ---- boot progress -----------------------------------------------------------
+
+fun progress_callback (duration, progress) {
+    if (mode != "boot" || status != "normal") {
+        return;
+    }
+    filled = Math.Int(line.w * progress);
+    if (filled < 1) {
+        filled = 1;
+    }
+    fill.sprite.SetImage(fill.source.Scale(filled, line.h));
+    head.sprite.SetX(line.x + filled - head.size / 2);
+}
+
+Plymouth.SetBootProgressFunction(progress_callback);
+
+# ---- prompt line -------------------------------------------------------------
+# Whatever cryptsetup asks is shown verbatim, shrunk if it would outrun the
+# field. Truncating would hide which device is being unlocked, or that the
+# last attempt failed.
+
+fun set_prompt (text, r, g, b) {
+    image = Image.Text(text, r, g, b, 1, font.prompt);
+    if (!image) {
+        prompt.sprite.SetOpacity(0);
+        return;
+    }
+    if (image.GetWidth() > field.w) {
+        image = fit_width(image, field.w);
+    }
+    prompt.sprite.SetImage(image);
+    prompt.sprite.SetPosition(screen.cx - image.GetWidth() / 2,
+                              field.y - image.GetHeight() - Math.Int(screen.h * 0.012),
+                              30);
+    prompt.sprite.SetOpacity(1);
+}
+
+# ---- passphrase / question ---------------------------------------------------
+# The bullet row lives in global.dots; reassigning the hash drops the sprites.
+
+fun clear_dots () {
+    global.dots = NULL;
+}
+
+fun draw_dots (count) {
+    clear_dots();
+    if (count < 1) {
+        caret.sprite.SetX(screen.cx - caret.w / 2);
+        return;
+    }
+    shown = count;
+    max = Math.Int(field.inner / bullet.gap);
+    if (shown > max) {
+        shown = max;
+    }
+    row = shown * bullet.gap - (bullet.gap - bullet.size);
+    start = screen.cx - row / 2;
+    for (i = 0; i < shown; i++) {
+        global.dots.sprite[i] = Sprite(bullet.image);
+        global.dots.sprite[i].SetPosition(start + i * bullet.gap,
+                                          field.cy - bullet.size / 2, 30);
+    }
+    caret.sprite.SetX(start + row + Math.Int(bullet.size * 0.6));
+}
+
+fun display_password_callback (prompt_text, bullets) {
+    global.status = "password";
+    line_opacity(0);
+    field.sprite.SetOpacity(1);
+    if (prompt_text == "") {
+        prompt_text = "Passphrase";
+    }
+    set_prompt(prompt_text, 0.463, 0.486, 0.627);        # 767ca0
+    draw_dots(bullets);
+    global.anim.tick = 0;
+    global.anim.caret_on = 1;
+    caret.sprite.SetOpacity(1);
+}
+
+fun display_question_callback (prompt_text, entry) {
+    global.status = "question";
+    line_opacity(0);
+    field.sprite.SetOpacity(1);
+    clear_dots();
+    set_prompt(prompt_text, 0.463, 0.486, 0.627);        # 767ca0
+
+    global.answer = NULL;
+    image = Image.Text(entry, 0.780, 0.816, 1, 1, font.prompt);   # c7d0ff
+    if (!image) {
+        return;
+    }
+    global.answer.sprite = Sprite(image);
+    global.answer.sprite.SetPosition(screen.cx - image.GetWidth() / 2,
+                                     field.cy - image.GetHeight() / 2, 30);
+    caret.sprite.SetX(screen.cx + image.GetWidth() / 2 + Math.Int(caret.w * 2));
+    global.anim.tick = 0;
+    global.anim.caret_on = 1;
+    caret.sprite.SetOpacity(1);
+}
+
+fun display_normal_callback () {
+    global.status = "normal";
+    clear_dots();
+    global.answer = NULL;
+    field.sprite.SetOpacity(0);
+    caret.sprite.SetOpacity(0);
+    prompt.sprite.SetOpacity(0);
+    if (mode == "boot") {
+        line_opacity(1);
+    }
+}
+
+Plymouth.SetDisplayPasswordFunction(display_password_callback);
+Plymouth.SetDisplayQuestionFunction(display_question_callback);
+Plymouth.SetDisplayNormalFunction(display_normal_callback);
+
+# ---- status messages (fsck progress, service failures) -----------------------
+
+fun message_callback (text) {
+    global.message = NULL;
+    image = Image.Text(text, 0.463, 0.486, 0.627, 1, font.status);   # 767ca0
+    if (!image) {
+        return;
+    }
+    if (image.GetWidth() > Math.Int(screen.w * 0.9)) {
+        image = fit_width(image, Math.Int(screen.w * 0.9));
+    }
+    global.message.sprite = Sprite(image);
+    global.message.sprite.SetPosition(screen.cx - image.GetWidth() / 2,
+                                      screen.y + Math.Int(screen.h * 0.90), 30);
+}
+
+Plymouth.SetMessageFunction(message_callback);

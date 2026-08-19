@@ -1,0 +1,35 @@
+# ${meta.name} -- Ghostty colors, written by `nejen theme render`.
+# Pulled into the main Ghostty config with:
+#   config-file = ?~/.local/state/nejen/theme/ghostty.conf
+# ANSI slot semantics are shared with templates/alacritty.toml.tmpl.
+
+background = ${palette.background}
+foreground = ${palette.foreground}
+
+cursor-color = ${palette.cursor}
+cursor-text = ${palette.background}
+
+selection-background = ${palette.selection_background}
+selection-foreground = ${palette.selection_foreground}
+
+split-divider-color = ${palette.border}
+
+# ANSI 0-7
+palette = 0=${palette.background}
+palette = 1=${palette.error}
+palette = 2=${palette.accent}
+palette = 3=${palette.warning}
+palette = 4=${palette.border}
+palette = 5=${palette.magenta}
+palette = 6=${palette.cyan}
+palette = 7=${palette.foreground}
+
+# ANSI 8-15: bright row mirrors normal, bright black carries the muted tone
+palette = 8=${palette.muted}
+palette = 9=${palette.error}
+palette = 10=${palette.accent}
+palette = 11=${palette.warning}
+palette = 12=${palette.border}
+palette = 13=${palette.magenta}
+palette = 14=${palette.cyan}
+palette = 15=${palette.foreground}

@@ -1,0 +1,275 @@
+[
+  {
+    "reload_style_on_change": true,
+    "name": "top-bar",
+    "layer": "top",
+    "position": "top",
+    "spacing": 3,
+    "height": 35,
+    "modules-left": [
+      "custom/nejen",
+      "hyprland/workspaces",
+      "custom/countdown",
+      "custom/weather"
+    ],
+    // The three indicator modules print empty text when their state is
+    // off, which collapses them -- so they only take up room while
+    // recording / caffeinated / silenced.
+    "modules-center": [
+      "clock#date",
+      "clock#time",
+      "custom/update",
+      "custom/screenrecording-indicator",
+      "custom/idle-indicator",
+      "custom/dnd-indicator"
+    ],
+    "modules-right": [
+      "group/tray-expander",
+      "network",
+      "bluetooth",
+      "pulseaudio",
+      "mpris",
+      "battery",
+      "cpu"
+    ],
+    "hyprland/workspaces": {
+      "on-click": "activate",
+      "format": "{icon}",
+      "format-icons": {
+        "1": "1",
+        "2": "2",
+        "3": "3",
+        "4": "4",
+        "5": "5",
+        "6": "6",
+        "7": "7",
+        "8": "8",
+        "9": "9",
+        "10": "0",
+        "default": "",
+        "active": "⌖"
+      },
+      "persistent-workspaces": {
+        "1": [],
+        "2": [],
+        "3": [],
+        "4": [],
+        "5": []
+      }
+    },
+    "custom/nejen": {
+      "format": "󰣇 [ NEJEN 1.0.0 ]",
+      "on-click": "nejen hub",
+      "on-click-right": "xdg-terminal-exec",
+      "tooltip-format": "NEJEN Hub\n\nSuper + N"
+    },
+    "custom/update": {
+      "format": "",
+      "exec": "nejen update available",
+      "on-click": "nejen present terminal nejen update",
+      "tooltip-format": "A NEJEN update is available\n\nClick to run nejen update",
+      "signal": 7,
+      "interval": 3600
+    },
+    "custom/countdown": {
+      "exec": "nejen countdown",
+      "on-click": "nejen countdown menu",
+      "return-type": "json",
+      "interval": 3600,
+      "tooltip": true,
+      "format": "{}"
+    },
+    "custom/weather": {
+      "exec": "nejen weather",
+      "interval": 900,
+      "return-type": "json",
+      "format": "{}",
+      "tooltip": true
+    },
+    "cpu": {
+      "interval": 5,
+      "format": "[ SYS.CPU: {usage}% ]",
+      "on-click": "nejen open tui --focus btop"
+    },
+    "clock#date": {
+      "format": "[ {:%a, %b %d} ]",
+      "tooltip-format": "<big>{0:%Y %B}</big>\n{0:%A, %d %B %Y}",
+      "interval": 3600,
+      "locale": "en_US.UTF-8"
+    },
+    "clock#time": {
+      "format": "[ {:%H:%M:%S} ]",
+      "tooltip-format": "Local Time",
+      "interval": 1,
+      "locale": "en_US.UTF-8",
+      "on-click-right": "nejen present terminal nejen tz select"
+    },
+    "battery": {
+      "format": "[ PWR.BAT: {capacity}% {icon} ]",
+      "format-discharging": "[ PWR.BAT: {capacity}% {icon} ]",
+      "format-charging": "[ PWR.CHG: {capacity}% ⚡ ]",
+      "format-plugged": "[ PWR.AC: CONNECTED ]",
+      "format-icons": {
+        "charging": [
+          "󰢜 ",
+          "󰂆 ",
+          "󰂇 ",
+          "󰂈 ",
+          "󰢝 ",
+          "󰂉 ",
+          "󰢞 ",
+          "󰂊 ",
+          "󰂋 ",
+          "󰂅 "
+        ],
+        "default": [
+          "󰁺 ",
+          "󰁻 ",
+          "󰁼 ",
+          "󰁽 ",
+          "󰁾 ",
+          "󰁿 ",
+          "󰂀 ",
+          "󰂁 ",
+          "󰂂 ",
+          "󰁹 "
+        ]
+      },
+      "format-full": "[ PWR.BAT: FULL {icon} ]",
+      "tooltip-format-discharging": "{power:>1.0f}W↓ {capacity}%",
+      "tooltip-format-charging": "{power:>1.0f}W↑ {capacity}%",
+      "interval": 10,
+      "on-click": "nejen hub session",
+      "states": {
+        "enough": 80,
+        "warning": 30,
+        "critical": 10
+      },
+      "full-at": 80,
+      "events": {
+        "on-charging-good": "notify-send -u normal 'Battery at 80%'",
+        "on-discharging-warning": "notify-send -u normal 'Low Battery: 30%'",
+        "on-discharging-critical": "notify-send -u critical 'Very Low Battery: 15%'"
+      }
+    },
+    "bluetooth": {
+      "format": "[ BT: {status}  ]",
+      "format-disabled": "[ BT: OFF 󰂲 ]",
+      "format-off": "[ BT: OFF 󰂲 ]",
+      "format-connected": "[ BT.LINK: {device_alias} 󰂱 ]",
+      "format-connected-battery": "[ BT.LINK: {device_alias} ({device_battery_percentage}%) 󰂱 ]",
+      "format-no-controller": "",
+      "tooltip-format": "Devices connected: {num_connections}",
+      "on-click": "nejen open bluetooth",
+      "on-click-right": "nejen open bluetooth --manager"
+    },
+    "pulseaudio": {
+      "format": "[ AUD.VOL: {volume}% {icon} ]",
+      "on-click": "nejen open audio",
+      "on-click-right": "nejen open audio --mixer",
+      "on-click-middle": "nejen audio mute sink",
+      "tooltip-format": "Playing at {volume}%",
+      "scroll-step": 5,
+      "format-muted": "[ AUD.MUTED  ]",
+      "format-icons": {
+        "headphone": " ",
+        "headset": " ",
+        "default": [
+          " ",
+          " ",
+          "  "
+        ]
+      }
+    },
+    "mpris": {
+      "format": "[ MEDIA: {player_icon} {status_icon} ]",
+      "format-paused": "[ MEDIA: {player_icon} {status_icon} ]",
+      "max-length": 35,
+      "player-icons": {
+        "spotify": " ",
+        "firefox": " ",
+        "chromium": " ",
+        "default": " "
+      },
+      "status-icons": {
+        "paused": "⏸ ",
+        "playing": "▶"
+      }
+    },
+    "group/tray-expander": {
+      "orientation": "inherit",
+      "drawer": {
+        "transition-duration": 600,
+        "children-class": "tray-group-item"
+      },
+      "modules": [
+        "custom/expand-icon",
+        "tray"
+      ]
+    },
+    "custom/expand-icon": {
+      "format": " ",
+      "tooltip": false
+    },
+    "custom/screenrecording-indicator": {
+      "on-click": "nejen screenrecord",
+      "exec": "nejen screenrecord status",
+      "signal": 8,
+      "return-type": "json"
+    },
+    "custom/voxtype": {
+      "exec": "nejen voxtype status",
+      "return-type": "json",
+      "format": "{icon}",
+      "format-icons": {
+        "idle": "",
+        "recording": "󰍬",
+        "transcribing": "󰔟"
+      },
+      "tooltip": true,
+      "on-click-right": "nejen voxtype config",
+      "on-click": "nejen voxtype model"
+    },
+    "custom/idle-indicator": {
+      "on-click": "nejen idle toggle",
+      "exec": "nejen idle status",
+      "signal": 9,
+      "return-type": "json"
+    },
+    "custom/dnd-indicator": {
+      "on-click": "nejen dnd toggle",
+      "exec": "nejen dnd status",
+      "signal": 10,
+      "return-type": "json"
+    },
+    "network": {
+      "format-icons": [
+        "󰤯 ",
+        "󰤟 ",
+        "󰤢 ",
+        "󰤥 ",
+        "󰤨 "
+      ],
+      "ignore-interfaces": [
+        "tun0",
+        "wg0",
+        "lo"
+      ],
+      "format": "[ NET: {ifname} ]",
+      "format-wifi": "[ NET.WIFI: {essid} ({signalStrength}dBm) {icon} ]",
+      "format-ethernet": "[ NET.ETH: CONNECTED 󰀂 ]",
+      "format-disconnected": "[ NET.OFFLINE 󰤮 ]",
+      "tooltip-format-wifi": "{essid} ({frequency} GHz)\n⇣{bandwidthDownBytes}  ⇡{bandwidthUpBytes}",
+      "tooltip-format-ethernet": "⇣{bandwidthDownBytes}  ⇡{bandwidthUpBytes}",
+      "tooltip-format-disconnected": "Disconnected",
+      "interval": 2,
+      "spacing": 1,
+      "on-click": "nejen open wifi",
+      "on-click-right": "nejen open wifi --manager"
+    },
+    "tray": {
+      "icon-size": 12,
+      "spacing": 12
+    }
+  }
+]

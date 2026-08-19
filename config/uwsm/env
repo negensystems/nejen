@@ -1,0 +1,35 @@
+# NEJEN session environment (read by uwsm when the Hyprland session starts).
+# Edits here only apply after logging out and back in.
+
+# Root of the NEJEN install; every shipped config resolves paths through it,
+# and Hyprland's own $NEJEN_PATH source= lines depend on it being exported
+# this early.
+# Resolved the same way the dispatcher does: a dev-mode install lives under
+# ~/.local/share/nejen, a pacman-installed one under /usr/share/nejen. Picking
+# the dev path unconditionally pointed packaged sessions at a directory that
+# does not exist, and every source= line below it failed silently.
+if [ -z "${NEJEN_PATH:-}" ]; then
+  if [ -d "$HOME/.local/share/nejen" ]; then
+    export NEJEN_PATH="$HOME/.local/share/nejen"
+  else
+    export NEJEN_PATH=/usr/share/nejen
+  fi
+fi
+
+# The one PATH entry NEJEN claims: the `nejen` dispatcher (guarded so
+# re-sourcing never stacks duplicates). A packaged install already ships it
+# at /usr/bin/nejen, so only a dev-mode tree needs this.
+if [ -d "$NEJEN_PATH/bin" ]; then
+  case ":$PATH:" in
+  *":$NEJEN_PATH/bin:"*) ;;
+  *) export PATH="$NEJEN_PATH/bin:$PATH" ;;
+  esac
+fi
+
+# App-facing defaults (terminal, editor, capture dirs) live in their own file
+# so users can reason about them separately from PATH plumbing.
+. "$HOME/.config/uwsm/default"
+
+# Expose mise-managed tools to GUI apps via shims - no interactive shell hook
+# ever runs for them.
+command -v mise >/dev/null 2>&1 && eval "$(mise activate bash --shims)"

@@ -1,0 +1,12 @@
+# Low-battery watchdog: one check per activation, driven by
+# nejen-battery-monitor.timer every 30 seconds. The nejen dispatcher is
+# addressed by absolute path (%h expands to the home directory) because
+# systemd user units don't inherit the login shell's PATH.
+
+[Unit]
+Description=NEJEN low-battery check
+After=graphical-session.target
+
+[Service]
+Type=oneshot
+ExecStart=%h/.local/share/nejen/bin/nejen battery monitor

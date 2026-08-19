@@ -1,0 +1,8 @@
+{
+  "extras": [
+    "lazyvim.plugins.extras.editor.harpoon2",
+    "lazyvim.plugins.extras.editor.neo-tree"
+  ],
+  "install_version": 8,
+  "version": 8
+}

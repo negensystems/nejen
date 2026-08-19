@@ -1,0 +1,63 @@
+# ${meta.name} -- btop theme, written by `nejen theme render`.
+#
+# Mapping philosophy: chrome (boxes, dividers, meters) stays on the quiet
+# border/muted tones, live data rides the accent, and every load gradient
+# ends hot on the error red so saturation is readable at a glance.
+
+# Base surfaces and text
+theme[main_bg]="${palette.background}"
+theme[main_fg]="${palette.foreground}"
+theme[title]="${palette.accent}"
+theme[hi_fg]="${palette.warning}"
+theme[inactive_fg]="${palette.muted}"
+theme[graph_text]="${palette.muted}"
+theme[meter_bg]="${palette.border}"
+
+# Process list selection
+theme[selected_bg]="${palette.selection_background}"
+theme[selected_fg]="${palette.selection_foreground}"
+theme[proc_misc]="${palette.accent}"
+
+# Box outlines and dividers
+theme[cpu_box]="${palette.border}"
+theme[mem_box]="${palette.border}"
+theme[net_box]="${palette.border}"
+theme[proc_box]="${palette.border}"
+theme[div_line]="${palette.muted}"
+
+# CPU load: idle slate -> busy magenta -> pegged red
+theme[cpu_start]="${palette.accent}"
+theme[cpu_mid]="${palette.magenta}"
+theme[cpu_end]="${palette.error}"
+
+# Temperature: cool cyan -> warm amber -> hot red
+theme[temp_start]="${palette.cyan}"
+theme[temp_mid]="${palette.warning}"
+theme[temp_end]="${palette.error}"
+
+# Memory meters
+theme[free_start]="${palette.cyan}"
+theme[free_mid]="${palette.accent}"
+theme[free_end]="${palette.border}"
+theme[cached_start]="${palette.magenta}"
+theme[cached_mid]="${palette.border}"
+theme[cached_end]="${palette.accent}"
+theme[available_start]="${palette.accent}"
+theme[available_mid]="${palette.cyan}"
+theme[available_end]="${palette.warning}"
+theme[used_start]="${palette.border}"
+theme[used_mid]="${palette.warning}"
+theme[used_end]="${palette.error}"
+
+# Network throughput
+theme[download_start]="${palette.cyan}"
+theme[download_mid]="${palette.accent}"
+theme[download_end]="${palette.magenta}"
+theme[upload_start]="${palette.warning}"
+theme[upload_mid]="${palette.magenta}"
+theme[upload_end]="${palette.error}"
+
+# Per-process cpu graphs
+theme[process_start]="${palette.border}"
+theme[process_mid]="${palette.accent}"
+theme[process_end]="${palette.error}"

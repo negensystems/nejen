@@ -1,0 +1,53 @@
+# NEJEN "nejen" theme -- NEJEN slate-blue.
+#
+# This file is the single source of truth for the theme. Per-app config
+# files are generated from $NEJEN_PATH/templates/*.tmpl by
+# `nejen theme render` into ~/.local/state/nejen/theme/.
+#
+# To create a new theme: copy this file into themes/<name>/theme.toml
+# (plus a backgrounds/ dir) and change the values.
+
+[meta]
+name = "Nejen"
+dark = true
+
+# Semantic palette. Terminal ANSI slots map as follows (encoded in
+# templates/alacritty.toml.tmpl; this mapping is the old colors.toml):
+#   black          -> background      bright black  -> muted
+#   red            -> error           yellow        -> warning
+#   green          -> accent          blue          -> border
+#   magenta        -> magenta         cyan          -> cyan
+#   white          -> foreground      (bright 9-15 repeat 1-7)
+[palette]
+background = "#08080a"           # main bg, ANSI black
+foreground = "#c7d0ff"           # main text, ANSI white
+accent = "#7f87df"               # glowing slate blue: cursor, selections, ANSI green
+border = "#4a4f8a"               # dim slate blue: box outlines, active border, ANSI blue
+muted = "#767ca0"                # inactive/disabled text, ANSI bright black
+error = "#ff3030"                # hot red: alerts, gradient hot end, ANSI red
+warning = "#d59a5a"              # amber, ANSI yellow
+magenta = "#7c6aa6"              # ANSI magenta
+cyan = "#6f8fbf"                 # ANSI cyan
+cursor = "#7f87df"               # text cursor (same as accent)
+selection_background = "#2b315f"
+selection_foreground = "#c7d0ff"
+
+[wallpaper]
+# Path relative to this theme's directory. Applied by `nejen theme set`,
+# but never over a wallpaper the user picked from their own collection in
+# ~/.config/nejen/backgrounds. Everything in backgrounds/ joins the picker
+# and the cycle alongside the user's images; see `nejen theme bg --help`.
+default = "backgrounds/default.jpg"
+
+# Per-app values that are NOT derivable from the palette.
+
+[hyprland]
+# Inactive window border: translucent neutral grey, intentionally outside
+# the palette (hex rrggbbaa form as Hyprland expects).
+inactive_border = "rgba(2a2a2aaa)"
+
+[vscode]
+color_theme = "Tokyo Night"
+
+[icons]
+theme = "Yaru-blue"

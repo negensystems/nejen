@@ -1,0 +1,232 @@
+/* NEJEN walker theme -- the console readout.
+ *
+ * Deliberately the same object as a Waybar module: same translucent slate
+ * ground, same 1px border, same 8px corner, same glow. The bar and the
+ * launcher should read as two views of one instrument, so a row here is
+ * styled like a bar module (quiet chrome, accent for the live thing) and
+ * the type is set the way the bar sets it -- monospace, bold, uppercase,
+ * tracked out. Palette values come from themes/nejen/theme.toml; keep them
+ * in sync with config/waybar/style.css rather than inventing new ones.
+ */
+@define-color nejen_bg rgba(10, 10, 18, 0.96);       /* palette.background */
+@define-color nejen_fg #c7d0ff;                       /* palette.foreground */
+@define-color nejen_muted #767ca0;                    /* palette.muted */
+@define-color nejen_accent #7f87df;                   /* palette.accent */
+@define-color nejen_border rgba(74, 79, 138, 0.35);   /* palette.border, bar alpha */
+@define-color nejen_border_hot rgba(127, 135, 223, 0.55);
+@define-color nejen_sel_bg rgba(127, 135, 223, 0.10);
+@define-color nejen_red #ff3030;                      /* palette.error, confirm rows only */
+@define-color nejen_glow rgba(74, 79, 138, 0.15);     /* same glow the bar modules carry */
+
+* {
+  font-family: "CaskaydiaMono Nerd Font", monospace;
+  font-weight: bold;
+}
+
+/* Outer panel: a Waybar module scaled up. Same border, radius and glow, with
+ * a drop shadow added because this one floats over the desktop. */
+.box-wrapper {
+  background-color: @nejen_bg;
+  border: 1px solid @nejen_border;
+  border-radius: 8px;
+  box-shadow:
+    0 12px 32px rgba(0, 0, 0, 0.55),
+    0 0 12px @nejen_glow,
+    inset 0 0 6px rgba(74, 79, 138, 0.05);
+  padding: 10px;
+}
+
+.search-container {
+  background-color: transparent;
+  margin-bottom: 8px;
+}
+
+/* The query field reads as a command line: its own bordered cell, tracked-out
+ * caps, and an accent rule that lights up while it has focus. */
+.input {
+  color: @nejen_fg;
+  background-color: rgba(74, 79, 138, 0.08);
+  border: 1px solid @nejen_border;
+  border-radius: 6px;
+  caret-color: @nejen_accent;
+  padding: 6px 12px;
+  min-height: 0;
+  font-size: 12px;
+  letter-spacing: 1px;
+  transition: all 0.15s ease-in-out;
+}
+
+.input:focus,
+.input:active {
+  border-color: @nejen_border_hot;
+  background-color: rgba(74, 79, 138, 0.14);
+  box-shadow: 0 0 8px @nejen_glow;
+}
+
+/* GTK4 paints a stock-blue focus ring and a tall stock min-height on the
+ * entry, and both survive every rule written against the `.input` class --
+ * they belong to the `entry` node underneath it, which is what has to be
+ * addressed. Without this the field keeps an Adwaita-blue rounded ring that
+ * has nothing to do with the palette, at roughly twice the needed height. */
+entry,
+entry:focus,
+entry:focus-visible,
+entry > text {
+  outline: none;
+  outline-width: 0;
+  outline-color: transparent;
+  box-shadow: none;
+  min-height: 0;
+}
+
+.input placeholder {
+  color: @nejen_muted;
+  letter-spacing: 2px;
+}
+
+.input selection {
+  background: rgba(127, 135, 223, 0.25);
+  color: @nejen_fg;
+}
+
+/* Exactly one surface in this panel is painted -- .box-wrapper -- and every
+ * layer inside it is cleared. Each layer that paints its own ground stacks
+ * another copy of the alpha, so a partly-painted stack renders the same
+ * translucency at three different strengths: a GTK-grey slab behind the
+ * list, a lighter strip behind the query, and the desktop legible through
+ * whichever one was left alone. One surface, one alpha. */
+.box,
+.list,
+.scroll,
+.content-container,
+scrolledwindow {
+  background: transparent;
+  color: @nejen_fg;
+}
+
+/* GTK puts both a min-height and a margin on grid children. The margin is
+ * the one that mattered: zeroing only min-height still left every row about
+ * three times the height its label needs, which is what made the menu read
+ * as a page of dead space rather than an instrument panel. */
+gridview > child,
+listview > row,
+.list > child {
+  min-height: 0;
+  padding: 0;
+  margin: 0;
+}
+
+/* A row is a bar module: quiet until it is the live one, then it takes the
+ * accent, the tint and the left rule -- exactly what an active workspace
+ * does on the bar. */
+.item-box {
+  border-radius: 4px;
+  border-left: 2px solid transparent;
+  padding: 5px 10px;
+  margin: 0;
+  min-height: 0;
+  transition: all 0.1s ease-in-out;
+}
+
+.item-text-box {
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+}
+
+child:selected,
+row:selected {
+  background-color: transparent;
+  background: transparent;
+  box-shadow: none;
+  outline-style: none;
+}
+
+child:selected .item-box,
+row:selected .item-box {
+  background: @nejen_sel_bg;
+  border-left: 2px solid @nejen_accent;
+}
+
+child:selected .item-text,
+row:selected .item-text {
+  color: @nejen_accent;
+  text-shadow:
+    0 0 6px rgba(127, 135, 223, 0.8),
+    0 0 12px rgba(127, 135, 223, 0.4);
+}
+
+child:selected .item-subtext,
+row:selected .item-subtext {
+  color: rgba(127, 135, 223, 0.7);
+}
+
+/* Caps and tracking are what make the bar's `[ SYS.CPU: 3% ]` read as
+ * instrumentation rather than prose; the menu earns it the same way. */
+.item-text {
+  color: @nejen_fg;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: all 0.1s ease-in-out;
+}
+
+/* Subtext stays sentence case: it carries real values (battery percentages,
+ * device kinds, paths), and caps would make those harder to read, not more
+ * technical. */
+.item-subtext {
+  color: @nejen_muted;
+  font-size: 10px;
+  letter-spacing: 0.5px;
+}
+
+scrollbar {
+  opacity: 0;
+}
+
+/* Footer, styled like the bar's own trailing modules: muted, tracked, with
+ * the key itself boxed the way a module boxes its value. */
+.keybinds {
+  border-top: 1px solid rgba(74, 79, 138, 0.18);
+  color: @nejen_muted;
+  font-size: 10px;
+  letter-spacing: 1px;
+  padding-top: 8px;
+  margin-top: 8px;
+}
+
+.keybind-label {
+  border: 1px solid @nejen_border;
+  border-radius: 4px;
+  background: rgba(74, 79, 138, 0.10);
+  color: @nejen_fg;
+  padding: 1px 5px;
+}
+
+.item-quick-activation {
+  color: @nejen_accent;
+  background: rgba(127, 135, 223, 0.10);
+  border: 1px solid @nejen_border;
+  border-radius: 4px;
+  font-size: 10px;
+  padding: 1px 5px;
+}
+
+.providerlist .item-subtext {
+  color: @nejen_accent;
+}
+
+.preview {
+  border: 1px solid @nejen_border;
+  border-radius: 6px;
+  background-color: rgba(10, 10, 18, 0.5);
+  color: @nejen_fg;
+  padding: 10px;
+}
+
+.elephant-hint,
+.placeholder {
+  color: @nejen_muted;
+  font-size: 11px;
+  letter-spacing: 1px;
+}

@@ -1,0 +1,127 @@
+# NEJEN core package manifest: the distribution.
+#
+# This is what NEJEN *is*: boot/base system + the complete Hyprland desktop
+# shell + the tooling the `nejen` command needs. Nothing else: no browsers, no AI tools, no office/media/consumer apps.
+# Users install their own applications from the Arch repos and AUR afterwards.
+#
+# Consumed by:
+#   install.sh --packages core   (dev-mode install of just the core setup set)
+#   build-iso.sh / archiso       (the live ISO ships EXACTLY this plus the
+#                                 releng live-boot infrastructure)
+#
+# The maintainer's full personal machine set lives in packages/full.txt
+# (a superset of this file).
+#
+# Every entry below is either core desktop-shell function or was verified as
+# referenced by shipped configs and scripts (grep before removing).
+
+## Official repos (core/extra/multilib)
+# Boot / base system
+amd-ucode
+base
+base-devel
+btrfs-progs
+efibootmgr
+intel-ucode
+linux
+linux-firmware
+# Boot splash (nejen theme in config/plymouth/, applied by first-run boot-theme.sh)
+plymouth
+# Networking / radios
+bluetuith
+bluez
+bluez-obex
+bluez-utils
+networkmanager
+# Audio (pipewire stack; wiremix is the `nejen open audio` TUI)
+gst-plugin-pipewire
+pipewire
+pipewire-alsa
+pipewire-jack
+pipewire-pulse
+sof-firmware
+wireplumber
+wiremix
+# Login: greetd + tuigreet on the installed system (live ISO uses TTY
+# autologin instead; see archiso/airootfs/root/customize_airootfs.sh)
+greetd
+greetd-tuigreet
+# Hyprland shell
+hypridle
+hyprland
+hyprland-guiutils
+hyprlock
+hyprpicker
+hyprsunset
+mako
+qt5-wayland
+qt6-wayland
+swaybg
+swayosd
+uwsm
+waybar
+xdg-desktop-portal-gtk
+xdg-desktop-portal-hyprland
+# Screenshots / recording (nejen screenshot, nejen screenrecord)
+ffmpeg
+gpu-screen-recorder
+grim
+satty
+slurp
+v4l-utils
+# Clipboard
+wl-clip-persist
+wl-clipboard
+# Terminal (default terminal)
+alacritty
+# Desktop plumbing referenced by shipped configs
+brightnessctl
+fprintd
+libnotify
+pamixer
+playerctl
+polkit-gnome
+# TUI / CLI tools required by the shipped bash/waybar configs
+bat
+bc
+btop
+eza
+fastfetch
+fzf
+git
+gum
+starship
+tmux
+zoxide
+# Editor: shipped default ($EDITOR in config/uwsm/default, config/nvim)
+neovim
+# Fonts referenced by the shipped configs + fallback
+noto-fonts
+noto-fonts-emoji
+ttf-cascadia-mono-nerd
+# Shell completion (nejen ships bash completion)
+bash-completion
+
+## AUR (install via paru)
+# AUR helper itself (bootstrapped by install.sh / pre-built for the ISO)
+paru
+# Launcher: walker + elephant backend + providers. `elephant` is required by walker at runtime.
+elephant
+elephant-calc
+elephant-clipboard
+elephant-files
+elephant-menus
+elephant-runner
+elephant-symbols
+elephant-websearch
+walker
+# XDPH screencast picker referenced by config/hypr/xdph.conf (the non-git
+# AUR package was removed upstream; -git provides the same binary)
+hyprland-preview-share-picker-git
+# Terminal indirection used by bindings, menus and TUI launchers
+xdg-terminal-exec
+# NOTE: `nejen brightness display apple` requires asdcontrol, which is no
+# longer on the AUR (checked 2026-07) - Apple Studio/XDR Display owners must
+# install it manually from upstream. Not listed here for that reason.
+# Dictation (nejen voxtype * subcommands + SUPER CTRL X binding)
+voxtype

@@ -1,0 +1,55 @@
+@define-color nejen_amber #4a4f8a;
+@define-color nejen_orange #7f87df;
+@define-color nejen_cyan #4a4f8a;
+@define-color nejen_green #7f87df;
+@define-color nejen_red #b35461;
+@define-color nejen_bg rgba(10, 10, 18, 0.65);
+@define-color nejen_border rgba(74, 79, 138, 0.35);
+@define-color nejen_glow rgba(74, 79, 138, 0.15);
+
+* {
+  font-family: "CaskaydiaMono Nerd Font", monospace;
+  font-weight: bold;
+}
+
+#window {
+  background-color: @nejen_bg;
+  border: 1px solid @nejen_border;
+  border-radius: 4px;
+  box-shadow: 0 0 12px @nejen_glow, inset 0 0 6px rgba(74, 79, 138, 0.05);
+}
+
+#search {
+  color: @nejen_orange;
+  background-color: transparent;
+  border-bottom: 1px solid @nejen_border;
+  text-shadow: 0 0 5px rgba(127, 135, 223, 0.5);
+  padding: 8px 10px;
+}
+
+#search placeholder {
+  color: rgba(74, 79, 138, 0.45);
+}
+
+#list {
+  color: @nejen_amber;
+  margin: 6px 10px;
+}
+
+#item {
+  border-radius: 2px;
+  border: 1px solid transparent;
+  transition: all 0.2s ease-in-out;
+  padding: 4px 8px;
+}
+
+#item:selected {
+  background-color: rgba(127, 135, 223, 0.08);
+  color: @nejen_green;
+  border: 1px solid rgba(127, 135, 223, 0.35);
+  text-shadow: 0 0 6px rgba(127, 135, 223, 0.8), 0 0 12px rgba(127, 135, 223, 0.4);
+}
+
+#text {
+  color: inherit;
+}
