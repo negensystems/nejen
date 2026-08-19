@@ -40,6 +40,55 @@ After installation, verify the environment:
 nejen doctor
 ```
 
+## Commands
+
+All desktop operations and tools route through the `nejen` binary. You can inspect keybindings anytime with `nejen keys` (or `Super+/`).
+
+### Core & System
+
+| Command | Description |
+| --- | --- |
+| `nejen doctor` | Verify system health, dependencies, and path configuration |
+| `nejen update` | Pull repository updates and run package upgrades |
+| `nejen keys` | Open searchable keybinding reference |
+| `nejen hub` | Open the central action menu (`Super+N`) |
+| `nejen hub session` | Open power and session menu (`Super+Shift+N`) |
+| `nejen lock` | Lock the screen immediately (`Ctrl+Escape`) |
+
+### Theming & Display
+
+| Command | Description |
+| --- | --- |
+| `nejen theme list` | List available themes |
+| `nejen theme set <name>` | Switch active theme and re-render application configs |
+| `nejen theme current` | Print the active theme name |
+| `nejen theme bg pick` | Open visual wallpaper picker (`Super+Shift+W`) |
+| `nejen night toggle` | Toggle screen warmth / night light filter (`Super+W`) |
+| `nejen bar toggle` | Toggle Waybar visibility (`Super+B`) |
+| `nejen bar restart` | Restart Waybar |
+
+### Window Management
+
+| Command | Description |
+| --- | --- |
+| `nejen win detach` | Float and pin current window (`Super+U`) |
+| `nejen win gaps` | Toggle window gaps (`Super+G`) |
+| `nejen win layout` | Switch between dwindle and master layouts (`Super+Y`) |
+| `nejen win square` | Toggle 1:1 aspect ratio constraint for single windows (`Super+O`) |
+| `nejen win close-all` | Close all windows on active workspace |
+
+### Hardware & Utilities
+
+| Command | Description |
+| --- | --- |
+| `nejen screenshot` | Capture selected screen region (`Print`) |
+| `nejen screenrecord` | Start or stop screen recording (`Super+R`) |
+| `nejen keyboard clean` | Temporarily disable keyboard input for wiping (`Super+Alt+K`) |
+| `nejen dnd toggle` | Toggle notification Do Not Disturb (`Super+Ctrl+D`) |
+| `nejen idle toggle` | Toggle idle sleep inhibitor / caffeine (`Super+I`) |
+| `nejen audio switch` | Switch active audio output sink |
+| `nejen keymap render` | Re-render Hyprland keybindings from `keymap.toml` |
+
 ## Customization
 
 To customize your setup, edit the corresponding override files. These files load last and take precedence:
