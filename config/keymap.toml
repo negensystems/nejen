@@ -567,6 +567,14 @@ desc = "Toggle idle lock (caffeine)"
 run = "nejen idle toggle"
 group = "toggles"
 
+# Deliberately a three-finger chord. Every other toggle here is cheap to
+# hit by accident; this one takes the keyboard away for half a minute.
+[[bind]]
+keys = "super+alt+k"
+desc = "Cleaning mode (keyboard off to wipe)"
+run = "nejen keyboard clean"
+group = "toggles"
+
 # ── Theme ───────────────────────────────────────────────────────────────
 
 [[bind]]
