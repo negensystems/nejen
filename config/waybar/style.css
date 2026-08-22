@@ -43,6 +43,7 @@ window#waybar {
 #custom-screenrecording-indicator,
 #custom-idle-indicator,
 #custom-dnd-indicator,
+#custom-keyboard-indicator,
 #custom-voxtype,
 #tray-expander,
 #network,
@@ -204,7 +205,8 @@ window#waybar {
 }
 
 #custom-idle-indicator.active,
-#custom-dnd-indicator.active {
+#custom-dnd-indicator.active,
+#custom-keyboard-indicator.active {
   color: @nejen_orange;
   text-shadow: 0 0 5px rgba(127, 135, 223, 0.5);
 }

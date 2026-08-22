@@ -1,0 +1,22 @@
+# Loaded via --config-file by `nejen keyboard clean` (which also sets the
+# org.nejen.cleaning window class). Same job as the screensaver's config:
+# a solid-black, chromeless, edge-to-edge canvas -- here for the cleaning
+# countdown, which has to be readable from further away than the screen
+# is usually used at.
+
+[window]
+decorations = "None"
+opacity = 1.0
+padding.x = 0
+padding.y = 0
+
+[font]
+size = 22.0
+
+[colors.primary]
+background = "#000000"
+foreground = "#ffffff"
+
+# Hide the block cursor by painting it background-black.
+[colors.cursor]
+cursor = "#000000"

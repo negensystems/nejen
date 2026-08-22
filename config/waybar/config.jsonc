@@ -12,16 +12,17 @@
       "custom/countdown",
       "custom/weather"
     ],
-    // The three indicator modules print empty text when their state is
-    // off, which collapses them -- so they only take up room while
-    // recording / caffeinated / silenced.
+    // The indicator modules print empty text when their state is off,
+    // which collapses them -- so they only take up room while recording /
+    // caffeinated / silenced / mid-wipe.
     "modules-center": [
       "clock#date",
       "clock#time",
       "custom/update",
       "custom/screenrecording-indicator",
       "custom/idle-indicator",
-      "custom/dnd-indicator"
+      "custom/dnd-indicator",
+      "custom/keyboard-indicator"
     ],
     "modules-right": [
       "group/tray-expander",
@@ -240,6 +241,17 @@
       "on-click": "nejen dnd toggle",
       "exec": "nejen dnd status",
       "signal": 10,
+      "return-type": "json"
+    },
+    // The only indicator on an interval rather than a signal alone. It
+    // counts down, so it has to redraw anyway -- and the poll doubles as
+    // the watchdog that gives the keyboard back if a cleaning session's
+    // supervisor ever dies mid-wipe.
+    "custom/keyboard-indicator": {
+      "on-click": "nejen keyboard clean --stop",
+      "exec": "nejen keyboard status",
+      "interval": 5,
+      "signal": 11,
       "return-type": "json"
     },
     "network": {

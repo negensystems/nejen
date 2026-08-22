@@ -67,6 +67,7 @@ items = [
   { label = "Nightlight", run = "nejen night toggle" },
   { label = "Idle lock (caffeine)", run = "nejen idle toggle" },
   { label = "Do not disturb", run = "nejen dnd toggle" },
+  { label = "Cleaning mode (keyboard off to wipe)", run = "nejen keyboard clean" },
   { label = "Gaps", run = "nejen win gaps" },
   { label = "Tiling layout", run = "nejen win layout" },
 ]

@@ -135,6 +135,30 @@ earlier shadows the same name later, so you can replace a shipped wallpaper
 without renaming yours. Add `--link` to `nejen theme bg add` to symlink
 large files instead of copying them.
 
+## Cleaning Mode
+
+`nejen keyboard clean` turns the keyboard off so you can wipe it, then turns
+it back on by itself. While it runs, every key press -- with or without
+modifiers -- is swallowed by a Hyprland submap, so a cloth dragged across the
+keys types nothing, opens nothing, and cannot answer a dialog. A full-screen
+overlay counts down the time left and catches the stray pointer taps a cloth
+produces.
+
+| Action | Key | Command |
+| --- | --- | --- |
+| Clean for 30 seconds | `Super+Alt+K` | `nejen keyboard clean` |
+| Clean for another duration | | `nejen keyboard clean --for 2m` |
+| Finish early | middle click | `nejen keyboard clean --stop` |
+
+It is also under **Toggles > Cleaning mode** in the hub (`Super+N`), and the
+bar grows a `󰌐` indicator you can click to finish.
+
+Durations accept `45`, `45s`, `1m30s`, and are clamped to between 5 seconds
+and 5 minutes. Because the pointer is deliberately left alive, there are
+always four ways back to a working keyboard -- the deadline, `--stop`, a
+middle click, and the bar indicator, which reaps the session if the process
+holding it open ever dies.
+
 ## Built-in Bar Modules
 
 Weather and countdown ship inside the `nejen` binary itself -- no interpreter, no external script:

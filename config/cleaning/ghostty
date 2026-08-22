@@ -1,0 +1,10 @@
+# Loaded via --config-file by `nejen keyboard clean` (font size and the
+# org.nejen.cleaning class are passed on the command line). Goal: a
+# solid-black canvas with no padding seams around the countdown.
+background = "000000"
+foreground = "ffffff"
+window-padding-x = 0
+window-padding-y = 0
+window-padding-color = "extend-always"
+cursor-style = "block"
+cursor-style-blink = false
