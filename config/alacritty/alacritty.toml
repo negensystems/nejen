@@ -1,0 +1,45 @@
+# NEJEN Alacritty defaults.
+#
+# Layering (wired by the installer in ~/.config/alacritty/alacritty.toml):
+# theme colors first, then this file, then the user's overrides.toml - later
+# imports win. The theme file below is re-rendered by `nejen theme set`.
+
+[general]
+import = ["~/.local/state/nejen/theme/alacritty.toml"]
+
+[env]
+TERM = "xterm-256color"
+
+# NEJEN's system-wide mono font; size and family both overridable per-user.
+[font]
+size = 9
+normal = { family = "CaskaydiaMono Nerd Font", style = "Regular" }
+bold = { family = "CaskaydiaMono Nerd Font", style = "Bold" }
+italic = { family = "CaskaydiaMono Nerd Font", style = "Italic" }
+
+[window]
+# Hyprland draws the decorations; the terminal just brings breathing room.
+decorations = "None"
+padding = { x = 12, y = 12 }
+dynamic_padding = true
+
+[scrolling]
+history = 20000
+
+[cursor]
+style = { shape = "Block", blinking = "Off" }
+
+[mouse]
+hide_when_typing = true
+
+[terminal]
+# Allow tmux/nvim on remote hosts to reach the local clipboard via OSC 52.
+osc52 = "CopyPaste"
+
+[keyboard]
+bindings = [
+  { key = "F11", action = "ToggleFullscreen" },
+  # Shift+Enter sends ESC+CR so TUI apps (e.g. chat UIs) can tell it apart
+  # from a plain Enter.
+  { key = "Return", mods = "Shift", chars = "\u001B\r" },
+]

@@ -1,0 +1,51 @@
+# NEJEN readline defaults. Loaded via `bind -f` from config/bash/rc, so a
+# user's own ~/.inputrc is still read normally by readline first.
+
+# --- Completion -------------------------------------------------------------
+
+# Case-insensitive, and treat - and _ as equivalent while matching.
+set completion-ignore-case on
+set completion-map-case on
+
+# Tab cycles through candidates (Shift-Tab cycles backwards), completing the
+# shared prefix first so a single match never needs a second keypress.
+TAB: menu-complete
+"\e[Z": menu-complete-backward
+set menu-complete-display-prefix on
+
+# When several candidates exist, print them all immediately - no bell-then-
+# second-Tab dance and no pager.
+set show-all-if-ambiguous on
+set show-all-if-unmodified on
+set page-completions off
+set completion-query-items 250
+
+# Candidate lists carry meaning: color by file type and append ls -F style
+# indicator characters; symlinked directories complete with a trailing slash.
+set colored-stats on
+set visible-stats on
+set mark-symlinked-directories on
+
+# Dotfiles only complete when the word already starts with a dot.
+set match-hidden-files off
+
+# Don't re-insert text that already sits to the right of the cursor when
+# completing in the middle of a word.
+set skip-completed-text on
+
+# --- History ----------------------------------------------------------------
+
+# Up/Down search history for what is already typed; a bare Up still walks
+# plain history since the empty prefix matches everything.
+"\e[A": history-search-backward
+"\e[B": history-search-forward
+
+# --- Input handling ---------------------------------------------------------
+
+# 8-bit clean input and output (UTF-8 everywhere).
+set input-meta on
+set output-meta on
+set convert-meta off
+
+# Never beep; flash if the terminal insists on signalling.
+set bell-style visible

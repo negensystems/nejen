@@ -1,0 +1,22 @@
+# NEJEN bash layer - shell behaviour (history, globbing, completion).
+
+# History: large, deduplicated, appended rather than clobbered.
+shopt -s histappend                # append on exit instead of overwriting
+shopt -s cmdhist                   # keep multi-line commands as one entry
+HISTSIZE=50000
+HISTFILESIZE=50000
+HISTCONTROL=ignoreboth:erasedups   # drop dupes and space-prefixed commands
+
+# Globbing and terminal hygiene.
+shopt -s globstar                  # ** matches directories recursively
+shopt -s checkwinsize              # keep LINES/COLUMNS honest after resizes
+shopt -s no_empty_cmd_completion   # Tab on an empty line stays quiet
+
+# Programmable completion, unless something already loaded it.
+if [[ -z ${BASH_COMPLETION_VERSINFO-} && -r /usr/share/bash-completion/bash_completion ]]; then
+  source /usr/share/bash-completion/bash_completion
+fi
+
+# No command path hashing: tools that appear mid-session (mise shims, fresh
+# installs) should be found without needing `hash -r`.
+set +h

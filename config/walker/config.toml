@@ -1,0 +1,62 @@
+# NEJEN walker defaults.
+#
+# NEJEN commands drive walker through `nejen open launcher`, which relies on:
+#   * --dmenu mode (nejen hub, nejen keys, and other pickers)
+#   * -m symbols / -m clipboard (keybindings in config/keymap.toml)
+#   * -m menus:* (the elephant menu providers in config/elephant/menus/)
+# Keep those providers configured when editing this file.
+
+# "waybar" ships in config/walker/themes/ and follows the NEJEN theme engine.
+theme = "waybar"
+
+# Wayland/Hyprland: grab the keyboard so the first keystroke never leaks to
+# the window underneath.
+force_keyboard_focus = true
+
+# Wrap from the last entry back to the first when arrowing past the end.
+selection_wrap = true
+
+# The bar stays clean; action hints add noise for little benefit.
+hide_action_hints = true
+
+[placeholders]
+"default" = { input = " Search...", list = "No Results" }
+
+[keybinds]
+# No number-row quick activation: too easy to fire while typing a query.
+quick_activate = []
+
+[columns]
+# The symbols provider is a dense glyph grid; one column keeps it scannable.
+symbols = 1
+
+[providers]
+max_results = 256
+
+# What a bare query searches.
+default = ["desktopapplications", "websearch"]
+
+# Prefix routing for everything else.
+[[providers.prefixes]]
+prefix = "/"
+provider = "providerlist"
+
+[[providers.prefixes]]
+prefix = "."
+provider = "files"
+
+[[providers.prefixes]]
+prefix = ":"
+provider = "symbols"
+
+[[providers.prefixes]]
+prefix = "="
+provider = "calc"
+
+[[providers.prefixes]]
+prefix = "@"
+provider = "websearch"
+
+[[providers.prefixes]]
+prefix = "$"
+provider = "clipboard"

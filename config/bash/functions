@@ -1,0 +1,177 @@
+# NEJEN bash layer - utility functions.
+# Small helpers for jobs that come up constantly on a desktop: archiving,
+# shrinking media for sharing, SSH tunnels, and git worktrees.
+
+# In interactive shells aliases expand at parse time, so a stale alias from a
+# pre-NEJEN setup would corrupt the function definitions below. Clear any
+# same-named aliases first.
+unalias compress decompress 2>/dev/null || true
+
+# --- Archives ---------------------------------------------------------------
+
+# compress <dir-or-file>  ->  <name>.tar.gz next to it
+compress() {
+  if [[ -z ${1-} ]]; then
+    echo "usage: compress <path>" >&2
+    return 2
+  fi
+  local src="${1%/}"
+  tar -czf "$src.tar.gz" "$src"
+}
+
+# decompress <archive> - unpack by extension, into the current directory.
+decompress() {
+  if [[ -z ${1-} || ! -f ${1-} ]]; then
+    echo "usage: decompress <archive>" >&2
+    return 2
+  fi
+  case "$1" in
+  *.tar.gz | *.tgz) tar -xzf "$1" ;;
+  *.tar.bz2 | *.tbz2) tar -xjf "$1" ;;
+  *.tar.xz | *.txz) tar -xJf "$1" ;;
+  *.tar.zst) tar --zstd -xf "$1" ;;
+  *.tar) tar -xf "$1" ;;
+  *.zip) unzip -q "$1" ;;
+  *.7z) 7z x "$1" ;;
+  *.gz) gunzip -k "$1" ;;
+  *.xz) unxz -k "$1" ;;
+  *.zst) unzstd "$1" ;;
+  *) echo "decompress: don't know how to unpack $1" >&2; return 1 ;;
+  esac
+}
+
+# --- Video ------------------------------------------------------------------
+
+# vidshare <video> - share-friendly copy: 1080p H.264 MP4, audio untouched.
+vidshare() {
+  [[ -z ${1-} ]] && { echo "usage: vidshare <video>" >&2; return 2; }
+  ffmpeg -i "$1" \
+    -vf "scale=-2:1080" \
+    -c:v libx264 -preset fast -crf 23 \
+    -c:a copy \
+    "${1%.*}-share.mp4"
+}
+
+# vidpack <video> - repack at full resolution with H.265; much smaller file.
+vidpack() {
+  [[ -z ${1-} ]] && { echo "usage: vidpack <video>" >&2; return 2; }
+  ffmpeg -i "$1" \
+    -c:v libx265 -preset slow -crf 24 \
+    -c:a aac -b:a 192k \
+    "${1%.*}-hevc.mp4"
+}
+
+# --- Images -----------------------------------------------------------------
+# All take an image plus optional extra ImageMagick args, and write a new file
+# next to the original (nothing is modified in place).
+
+# Any image -> high-quality JPG, metadata stripped. Optionally capped in
+# width by the internal helper below.
+_nejen_img_to_jpg() {
+  local suffix="$1" max_width="$2" img="$3"
+  shift 3
+  local -a resize=()
+  [[ -n $max_width ]] && resize=(-resize "${max_width}x>")
+  magick "$img" "$@" "${resize[@]}" -strip -quality 95 "${img%.*}-$suffix.jpg"
+}
+
+jpgify() {
+  [[ -z ${1-} ]] && { echo "usage: jpgify <image> [magick-args]" >&2; return 2; }
+  _nejen_img_to_jpg full "" "$@"
+}
+
+jpgify-1080() {
+  [[ -z ${1-} ]] && { echo "usage: jpgify-1080 <image> [magick-args]" >&2; return 2; }
+  _nejen_img_to_jpg 1080w 1080 "$@"
+}
+
+jpgify-1800() {
+  [[ -z ${1-} ]] && { echo "usage: jpgify-1800 <image> [magick-args]" >&2; return 2; }
+  _nejen_img_to_jpg 1800w 1800 "$@"
+}
+
+# pngify <image> - PNG recompressed as hard as lossless allows, metadata stripped.
+pngify() {
+  [[ -z ${1-} ]] && { echo "usage: pngify <image> [magick-args]" >&2; return 2; }
+  local img="$1"
+  shift
+  magick "$img" "$@" -strip \
+    -define png:compression-level=9 \
+    -define png:compression-filter=5 \
+    -define png:compression-strategy=1 \
+    -define png:exclude-chunk=all \
+    "${img%.*}-packed.png"
+}
+
+# --- SSH port forwarding ----------------------------------------------------
+
+# ssh-fwd <host> <port>... - background-forward local ports to the same
+# ports on <host>.
+ssh-fwd() {
+  if (($# < 2)); then
+    echo "usage: ssh-fwd <host> <port>..." >&2
+    return 2
+  fi
+  local host="$1" port
+  shift
+  for port in "$@"; do
+    if ssh -f -N -L "$port:localhost:$port" "$host"; then
+      echo "localhost:$port -> $host:$port"
+    fi
+  done
+}
+
+# ssh-unfwd <port>... - tear down forwards created by ssh-fwd.
+ssh-unfwd() {
+  if (($# == 0)); then
+    echo "usage: ssh-unfwd <port>..." >&2
+    return 2
+  fi
+  local port
+  for port in "$@"; do
+    if pkill -f "ssh.*-L $port:localhost:$port"; then
+      echo "closed forward on port $port"
+    else
+      echo "no forward on port $port"
+    fi
+  done
+}
+
+# ssh-fwds - list active forwards.
+ssh-fwds() {
+  pgrep -af "ssh.*-L [0-9]+:localhost:[0-9]+" || echo "no active forwards"
+}
+
+# --- Git worktrees ----------------------------------------------------------
+# Sibling-directory convention: repo "proj" gets worktrees at
+# ../proj--<branch>, so wtd can find its way back.
+
+# wta <branch> - new worktree + branch beside the repo, then cd into it.
+wta() {
+  if [[ -z ${1-} ]]; then
+    echo "usage: wta <branch>" >&2
+    return 2
+  fi
+  local branch="$1"
+  local dest="../$(basename "$PWD")--$branch"
+  git worktree add -b "$branch" "$dest" || return
+  ! command -v mise &>/dev/null || mise trust "$dest" 2>/dev/null
+  cd "$dest" || return
+}
+
+# wtd - from inside a wta-created worktree: remove it and delete its branch.
+wtd() {
+  local here dir branch repo
+  here="$PWD"
+  dir="$(basename "$here")"
+  repo="${dir%%--*}"
+  branch="${dir#*--}"
+
+  if [[ $repo == "$dir" ]]; then
+    echo "wtd: $dir does not look like a wta worktree (no '--' in name)" >&2
+    return 1
+  fi
+  gum confirm "Remove worktree $dir and branch $branch?" || return
+  cd "../$repo" || return
+  git worktree remove "$here" --force && git branch -D "$branch"
+}

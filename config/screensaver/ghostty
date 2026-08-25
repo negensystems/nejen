@@ -1,0 +1,7 @@
+# Loaded via --config-file by `nejen screensaver show` (font size and the
+# org.nejen.screensaver class are passed on the command line). Goal: a
+# solid-black canvas with no padding seams around the TTE animation.
+background = "000000"
+window-padding-x = 0
+window-padding-y = 0
+window-padding-color = "extend-always"

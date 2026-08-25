@@ -1,0 +1,12 @@
+# NEJEN session app defaults, sourced from config/uwsm/env at session start.
+# Relog (or relaunch Hyprland) after changing anything here.
+
+# Terminal resolution goes through xdg-terminal-exec, so swapping terminals
+# is a matter of changing the xdg-terminals list, not every keybinding.
+export TERMINAL=xdg-terminal-exec
+
+export EDITOR=nvim
+
+# Where `nejen screenshot` and `nejen screenrecord` save their output.
+export NEJEN_SCREENSHOT_DIR="$HOME/Pictures/Screenshots"
+export NEJEN_SCREENRECORD_DIR="$HOME/Videos"

@@ -1,0 +1,65 @@
+{
+  // NEJEN system summary, shown by `nejen open about` in a floating terminal.
+  // The logo is the branding file the installer links at
+  // ~/.config/nejen/branding/about.txt (defaults to the NEJEN wordmark).
+  "$schema": "https://github.com/fastfetch-cli/fastfetch/raw/dev/doc/json_schema.json",
+  "logo": {
+    "type": "file",
+    "source": "~/.config/nejen/branding/about.txt",
+    "color": { "1": "blue" },
+    "padding": { "top": 1, "left": 2, "right": 5 }
+  },
+  "display": {
+    "separator": "  ",
+    "key": { "width": 12 }
+  },
+  "modules": [
+    "break",
+    { "type": "custom", "format": "\u001b[1;34mnejen\u001b[0m \u001b[90m─────────────────────────────" },
+    {
+      "type": "command",
+      "key": "  release",
+      "keyColor": "blue",
+      "text": "echo \"NEJEN $(nejen version) ($(nejen version channel))\""
+    },
+    {
+      "type": "command",
+      "key": "  theme",
+      "keyColor": "blue",
+      "text": "nejen theme current"
+    },
+    {
+      "type": "command",
+      "key": "  synced",
+      "keyColor": "blue",
+      "text": "nejen version pkgs"
+    },
+    "break",
+    { "type": "custom", "format": "\u001b[1;36msoftware\u001b[0m \u001b[90m──────────────────────────" },
+    { "type": "kernel", "key": "  kernel", "keyColor": "cyan" },
+    { "type": "wm", "key": "  wm", "keyColor": "cyan" },
+    { "type": "shell", "key": "  shell", "keyColor": "cyan" },
+    { "type": "terminal", "key": "  terminal", "keyColor": "cyan" },
+    { "type": "packages", "key": "  packages", "keyColor": "cyan" },
+    "break",
+    { "type": "custom", "format": "\u001b[1;35mhardware\u001b[0m \u001b[90m──────────────────────────" },
+    { "type": "host", "key": "  machine", "keyColor": "magenta" },
+    { "type": "cpu", "key": "  cpu", "keyColor": "magenta", "showPeCoreCount": true },
+    { "type": "gpu", "key": "  gpu", "keyColor": "magenta", "detectionMethod": "pci" },
+    { "type": "memory", "key": "  memory", "keyColor": "magenta" },
+    { "type": "disk", "key": "  disk", "keyColor": "magenta" },
+    { "type": "display", "key": "  display", "keyColor": "magenta" },
+    "break",
+    { "type": "custom", "format": "\u001b[1;33muptime\u001b[0m \u001b[90m────────────────────────────" },
+    { "type": "uptime", "key": "  session", "keyColor": "yellow" },
+    {
+      "type": "command",
+      "key": "  install",
+      "keyColor": "yellow",
+      "text": "echo \"$(( ($(date +%s) - $(stat -c %W /)) / 86400 )) days old\""
+    },
+    "break",
+    { "type": "colors", "symbol": "circle", "paddingLeft": 2 },
+    "break"
+  ]
+}

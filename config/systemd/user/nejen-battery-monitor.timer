@@ -1,0 +1,15 @@
+# Fires nejen-battery-monitor.service on a 30-second cadence so a
+# draining battery is noticed within half a minute of crossing the
+# threshold. Enabled by install/first-run/battery-monitor.sh, and only
+# on machines that actually have a battery.
+
+[Unit]
+Description=Periodic NEJEN low-battery check
+
+[Timer]
+OnStartupSec=1min
+OnUnitActiveSec=30sec
+AccuracySec=10sec
+
+[Install]
+WantedBy=timers.target

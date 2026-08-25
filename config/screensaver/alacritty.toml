@@ -1,0 +1,20 @@
+# Loaded via --config-file by `nejen screensaver show` (which also sets
+# the org.nejen.screensaver window class). Everything here serves one
+# goal: a solid-black, chromeless, edge-to-edge canvas for the NEJEN
+# standby scene (`nejen screensaver render`).
+
+[window]
+decorations = "None"
+opacity = 1.0
+padding.x = 0
+padding.y = 0
+
+[font]
+size = 18.0
+
+[colors.primary]
+background = "#000000"
+
+# Hide the block cursor by painting it background-black.
+[colors.cursor]
+cursor = "#000000"

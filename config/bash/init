@@ -1,0 +1,24 @@
+# NEJEN bash layer - tool hooks.
+# Everything here is optional and guarded: a missing tool just means its hook
+# is skipped, so this file is safe on minimal installs and rescue shells.
+
+# Runtime/version manager.
+if command -v mise &>/dev/null; then
+  eval "$(mise activate bash)"
+fi
+
+# Smarter cd: `z <fragment>` jumps to frecent directories.
+if command -v zoxide &>/dev/null; then
+  eval "$(zoxide init bash)"
+fi
+
+# fzf extras: Ctrl-R history search, Ctrl-T file picker, ** completion.
+if command -v fzf &>/dev/null; then
+  [[ -r /usr/share/fzf/key-bindings.bash ]] && source /usr/share/fzf/key-bindings.bash
+  [[ -r /usr/share/fzf/completion.bash ]] && source /usr/share/fzf/completion.bash
+fi
+
+# Prompt last, so it can observe everything set up above.
+if command -v starship &>/dev/null; then
+  eval "$(starship init bash)"
+fi

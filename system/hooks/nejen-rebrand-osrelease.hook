@@ -1,0 +1,10 @@
+[Trigger]
+Type = Package
+Operation = Install
+Operation = Upgrade
+Target = filesystem
+
+[Action]
+Description = Rebranding os-release to NEJEN...
+When = PostTransaction
+Exec = /usr/bin/bash -c "sed -i 's/PRETTY_NAME=\"Arch Linux\"/PRETTY_NAME=\"NEJEN Arch Linux\"/g; s/NAME=\"Arch Linux\"/NAME=\"NEJEN Arch Linux\"/g' /usr/lib/os-release"

@@ -1,0 +1,45 @@
+/*
+ * NEJEN swayosd base styling.
+ *
+ * Import order (assembled by the installer): theme css -> this file ->
+ * user overrides.css. The shipped nejen theme's swayosd template is empty
+ * because this file already carries the nejen palette; other themes overlay
+ * their own colors on top of the structure defined here.
+ */
+
+/* Palette (matches the nejen theme) */
+window {
+  /* Sit just below the top bar rather than centered mid-screen. */
+  margin-top: 45px;
+  margin-bottom: 0px;
+
+  background-color: rgba(10, 10, 18, 0.65);
+  border: 1px solid rgba(74, 79, 138, 0.35);
+  border-radius: 12px;
+  box-shadow:
+    0 0 12px rgba(74, 79, 138, 0.15),
+    inset 0 0 6px rgba(74, 79, 138, 0.05);
+  opacity: 0.95;
+  padding: 12px 16px;
+}
+
+label {
+  color: #7f87df;
+  font-family: "CaskaydiaMono Nerd Font", monospace;
+  font-size: 11pt;
+  font-weight: bold;
+}
+
+image {
+  color: #7f87df;
+}
+
+progressbar {
+  background-color: rgba(74, 79, 138, 0.15);
+  border-radius: 8px;
+}
+
+progress {
+  background: linear-gradient(to right, #4a4f8a, #7f87df);
+  border-radius: 8px;
+}

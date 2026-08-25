@@ -1,0 +1,34 @@
+archiso/local-repo/
+archiso/airootfs/etc/skel/nejen/
+*.iso
+
+__pycache__/
+*.pyc
+*.swp
+*.bak
+.DS_Store
+
+bin/nejen
+
+# Extracted initramfs, if one is ever unpacked here again while debugging
+# the boot splash. Root-anchored: shipped system files live under config/
+# and system/, never at the repo root.
+/usr/
+/etc/
+/var/
+/hooks/
+/kernel/
+/new_root/
+/init
+/init_functions
+/early_cpio
+/buildconfig
+/keymap.bin
+/keymap.utf8
+/VERSION
+/lib
+/lib64
+/sbin
+
+# Binary from `go build ./...` at the repo root.
+/nejen

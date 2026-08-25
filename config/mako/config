@@ -1,0 +1,32 @@
+# NEJEN mako defaults - GLOBAL OPTIONS ONLY.
+#
+# mako has no include mechanism, so ~/.config/mako/config is GENERATED
+# (by install.sh, and eventually by `nejen theme set`) by concatenating,
+# in this exact order (mako requires globals before any [criteria] section):
+#   1. this file                                  (shipped global defaults)
+#   2. ~/.local/state/nejen/theme/mako.ini        (rendered per-theme colors)
+#   3. ~/.config/nejen/mako-overrides             (user overrides, optional)
+#   4. $NEJEN_PATH/config/mako/sections           ([criteria] sections, last)
+# Later values for the same key win, so theme beats defaults and user beats
+# theme. Never hand-edit the generated ~/.config/mako/config.
+#
+# Do NOT add [criteria] sections to this file - they go in config/mako/sections.
+anchor=top-center
+layer=overlay
+max-visible=5
+default-timeout=3000
+margin=12
+border-size=1
+border-radius=4
+width=320
+height=80
+padding=10
+font=CaskaydiaMono Nerd Font 10
+# NEJEN theme colors: these stay here until templates/mako.ini.tmpl carries them
+# (the rendered mako.ini is currently an intentionally empty override).
+background-color=#0a0a12a6
+text-color=#c8cbff
+border-color=#4a4f8a59
+progress-color=over #2c3366ff
+icons=1
+markup=1
