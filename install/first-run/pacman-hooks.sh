@@ -18,7 +18,7 @@ for hook in "$REPO_HOOKS_DIR"/*.hook; do
   hook_name=$(basename "$hook")
   echo "Installing $hook_name..."
   sudo cp "$hook" "$HOOKS_DIR/"
-  if [[ "$hook_name" == "nejen-walker-restart.hook" && ! -f /usr/bin/nejen ]]; then
+  if [[ ( "$hook_name" == "nejen-walker-restart.hook" || "$hook_name" == "nejen-app-cache.hook" ) && ! -f /usr/bin/nejen ]]; then
     dev_nejen_path="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)/bin/nejen"
     sudo sed -i "s|/usr/bin/nejen|$dev_nejen_path|g" "$HOOKS_DIR/$hook_name"
   fi
