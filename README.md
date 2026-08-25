@@ -78,6 +78,7 @@ The cheat sheet is generated directly from `keymap.toml` to stay in sync with yo
 | --- | --- |
 | `nejen doctor` | Check system health and dependencies |
 | `nejen update` | Pull repository updates and upgrade packages |
+| `nejen search <query>` | Search official and AUR packages |
 | `nejen version` | Show the installed NEJEN version |
 | `nejen keys` | Open the searchable keybinding sheet |
 | `nejen hub` | Open the main action menu (`Super+N`) |
