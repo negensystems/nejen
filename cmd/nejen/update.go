@@ -116,6 +116,17 @@ func runUpdate(args []string) {
 		}
 	}
 
+	fmt.Printf("\033[32m\nDeploy system hooks\033[0m\n")
+	if info, err := os.Stat(filepath.Join(nejenPath, "install", "first-run", "pacman-hooks.sh")); err == nil && !info.IsDir() {
+		cmdHooks := exec.Command("bash", filepath.Join(nejenPath, "install", "first-run", "pacman-hooks.sh"))
+		cmdHooks.Stdin = os.Stdin
+		cmdHooks.Stdout = os.Stdout
+		cmdHooks.Stderr = os.Stderr
+		if err := cmdHooks.Run(); err != nil {
+			fmt.Printf("warning: failed to deploy pacman hooks: %v\n", err)
+		}
+	}
+
 	fmt.Printf("\033[32m\nRe-render keymap and theme\033[0m\n")
 	// nejenSelf: a packaged install has no bin/ under NEJEN_PATH.
 	nejenBin := nejenSelf()
