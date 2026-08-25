@@ -167,6 +167,7 @@ NEJEN, an opinionated Arch + Hyprland desktop.
 Core & system
   doctor                    Check system health and dependencies
   update                    Pull repository updates and upgrade packages
+  search <query>            Search official and AUR packages
   version                   Show the NEJEN version
   keys                      Open the searchable keybinding sheet
   hub [menu]                Open the action menu (default: root)
