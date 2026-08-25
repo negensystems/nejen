@@ -26,7 +26,6 @@ linux-firmware
 # Boot splash (nejen theme in config/plymouth/, applied by first-run boot-theme.sh)
 plymouth
 # Networking / radios
-bluetuith
 bluez
 bluez-obex
 bluez-utils
@@ -139,3 +138,5 @@ xdg-terminal-exec
 # install it manually from upstream. Not listed here for that reason.
 # Dictation (nejen voxtype * subcommands + SUPER CTRL X binding)
 voxtype
+# TUI-based bluetooth manager (dropped from official repos)
+bluetuith

@@ -244,6 +244,7 @@ func runInstallDeps(args []string) {
 		cmd.Stdin = os.Stdin
 		if err := cmd.Run(); err != nil {
 			fmt.Fprintf(os.Stderr, "pacman failed: %v\n", err)
+			os.Exit(1)
 		}
 	}
 
@@ -273,6 +274,7 @@ func runInstallDeps(args []string) {
 		cmd.Stdin = os.Stdin
 		if err := cmd.Run(); err != nil {
 			fmt.Fprintf(os.Stderr, "%s failed: %v\n", helper, err)
+			os.Exit(1)
 		}
 	}
 }
