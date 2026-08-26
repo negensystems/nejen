@@ -152,6 +152,30 @@ func runDoctor(nejenPath string) {
 		warn(fmt.Sprintf("optional commands missing (some subcommands degrade): %s", strings.Join(missingOptional, " ")))
 	}
 
+	// Check if NTP is enabled and synchronized.
+	if _, err := exec.LookPath("timedatectl"); err != nil {
+		warn("cannot check the system clock: timedatectl not on PATH")
+	} else if out, err := exec.Command("timedatectl", "show", "--property=NTP", "--property=NTPSynchronized").Output(); err != nil {
+		warn("cannot check the system clock: timedatectl failed")
+	} else {
+		// Parse properties since `--value` doesn't guarantee order.
+		props := map[string]string{}
+		for _, line := range strings.Split(string(out), "\n") {
+			if key, value, ok := strings.Cut(strings.TrimSpace(line), "="); ok {
+				props[key] = value
+			}
+		}
+		ntpEnabled, ntpSynced := props["NTP"] == "yes", props["NTPSynchronized"] == "yes"
+		switch {
+		case ntpSynced:
+			pass("system clock synchronized over NTP")
+		case ntpEnabled:
+			warn("NTP is on but the clock has not synchronized yet (no network, or a blocked NTP port)")
+		default:
+			warn("no time sync is enabled; the clock will drift (fix: sudo timedatectl set-ntp true)")
+		}
+	}
+
 	fmt.Printf("\nnejen doctor: %d passed, %d warnings, %d failed\n", passCount, warnCount, failCount)
 	if failCount > 0 {
 		os.Exit(1)
