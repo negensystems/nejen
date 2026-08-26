@@ -22,6 +22,7 @@ func runFirstRun(args []string) {
 			"battery-monitor.sh",
 			"cleanup-reboot-sudoers.sh",
 			"firewall.sh",
+			"time-sync.sh",
 			"dns-resolver.sh",
 			"gnome-theme.sh",
 			"elephant.sh",

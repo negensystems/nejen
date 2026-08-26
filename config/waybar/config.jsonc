@@ -92,17 +92,17 @@
       "format": "[ SYS.CPU: {usage}% ]",
       "on-click": "nejen open tui --focus btop"
     },
+    // Interval of 60 ensures date updates correctly for non-hourly timezones.
     "clock#date": {
       "format": "[ {:%a, %b %d} ]",
       "tooltip-format": "<big>{0:%Y %B}</big>\n{0:%A, %d %B %Y}",
-      "interval": 3600,
-      "locale": "en_US.UTF-8"
+      "interval": 60
     },
+    // Locale is omitted to avoid crashes on systems missing en_US.UTF-8.
     "clock#time": {
       "format": "[ {:%H:%M:%S} ]",
       "tooltip-format": "Local Time",
       "interval": 1,
-      "locale": "en_US.UTF-8",
       "on-click-right": "nejen present terminal nejen tz select"
     },
     "battery": {
