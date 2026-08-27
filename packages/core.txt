@@ -1,8 +1,8 @@
 # NEJEN core package manifest: the distribution.
 #
 # This is what NEJEN *is*: boot/base system + the complete Hyprland desktop
-# shell + the tooling the `nejen` command needs. Nothing else: no browsers, no AI tools, no office/media/consumer apps.
-# Users install their own applications from the Arch repos and AUR afterwards.
+# shell + the tooling the `nejen` command needs, alongside a minimum essential
+# set of tools (a browser and file managers) for immediate usability.
 #
 # Consumed by:
 #   install.sh                   (installs the core desktop environment)
@@ -110,6 +110,11 @@ bash-completion
 go
 rsync
 
+# Essential user apps
+firefox
+nautilus
+yazi
+
 ## AUR (install via paru)
 # AUR helper itself: the one package no AUR helper can install for you.
 # install.sh bootstraps it by hand (git clone + makepkg) when neither paru
@@ -118,6 +123,7 @@ rsync
 # path paru is therefore already present by the time this line is read; it
 # is still what puts paru on the ISO.
 paru
+onlyoffice-bin
 # Launcher: walker + elephant backend + providers. `elephant` is required by walker at runtime.
 elephant
 elephant-calc

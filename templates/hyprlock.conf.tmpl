@@ -63,7 +63,7 @@ background {
 # Clock
 label {
     monitor =
-    text = <span weight="bold">$TIME</span>
+    text = cmd[update:1000] date +"<span weight='bold'>%H:%M:%S</span>"
     color = $text
     font_size = 145
     font_family = $font

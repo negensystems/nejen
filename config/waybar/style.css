@@ -1,14 +1,3 @@
-@define-color nejen_amber #4a4f8a;
-@define-color nejen_orange #7f87df;
-@define-color nejen_cyan #4a4f8a;
-@define-color nejen_green #7f87df;
-@define-color nejen_red #b35461;
-@define-color nejen_fg #c7d0ff;
-@define-color nejen_muted #767ca0;
-@define-color nejen_bg rgba(10, 10, 18, 0.65);
-@define-color nejen_border rgba(74, 79, 138, 0.35);
-@define-color nejen_glow rgba(74, 79, 138, 0.15);
-
 /* Base bar styling. The bar itself paints nothing; each module carries its
  * own panel (see the module chrome rule below), so the gaps between modules
  * show the desktop straight through. */
