@@ -9,8 +9,8 @@
     "modules-left": [
       "custom/nejen",
       "hyprland/workspaces",
-      "custom/countdown",
-      "custom/weather"
+      "custom/weather",
+      "custom/timer"
     ],
     // The indicator modules print empty text when their state is off,
     // which collapses them, so they only take up room while recording /
@@ -26,7 +26,6 @@
     ],
     "modules-right": [
       "group/tray-expander",
-      "network",
       "bluetooth",
       "pulseaudio",
       "mpris",
@@ -72,16 +71,19 @@
       "signal": 7,
       "interval": 3600
     },
-    "custom/countdown": {
-      "exec": "nejen countdown",
-      "on-click": "nejen countdown menu",
+    "custom/timer": {
+      "exec": "waybar-timer update",
       "return-type": "json",
-      "interval": 3600,
+      "interval": 1,
+      "format": "󰔟 {}",
       "tooltip": true,
-      "format": "{}"
+      "on-click": "waybar-timer toggle",
+      "on-click-right": "waybar-timer stop",
+      "on-scroll-up": "waybar-timer increase 60",
+      "on-scroll-down": "waybar-timer decrease 60"
     },
     "custom/weather": {
-      "exec": "nejen weather",
+      "exec": "waybar-weather",
       "interval": 900,
       "return-type": "json",
       "format": "{}",
@@ -243,16 +245,43 @@
       "signal": 10,
       "return-type": "json"
     },
-    // The only indicator on an interval rather than a signal alone. It
-    // counts down, so it has to redraw anyway, and the poll doubles as
-    // the watchdog that gives the keyboard back if a cleaning session's
-    // supervisor ever dies mid-wipe.
     "custom/keyboard-indicator": {
       "on-click": "nejen keyboard clean --stop",
       "exec": "nejen keyboard status",
       "interval": 5,
       "signal": 11,
       "return-type": "json"
+    },
+    "tray": {
+      "icon-size": 12,
+      "spacing": 12
+    }
+  },
+  {
+    "reload_style_on_change": true,
+    "name": "bottom-bar",
+    "layer": "top",
+    "position": "bottom",
+    "spacing": 3,
+    "height": 35,
+    "modules-left": [],
+    "modules-center": [],
+    "modules-right": [
+      "custom/tradingview",
+      "custom/vpn",
+      "network"
+    ],
+    "custom/tradingview": {
+      "exec": "waybar-tradingview -pango=false",
+      "interval": 60,
+      "return-type": "json",
+      "format": "{}"
+    },
+    "custom/vpn": {
+      "exec": "waybar-nordvpn-go",
+      "interval": 10,
+      "return-type": "json",
+      "format": "{}"
     },
     "network": {
       "format-icons": [
@@ -278,10 +307,6 @@
       "spacing": 1,
       "on-click": "nejen open wifi",
       "on-click-right": "nejen open wifi --manager"
-    },
-    "tray": {
-      "icon-size": 12,
-      "spacing": 12
     }
   }
 ]

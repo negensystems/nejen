@@ -36,7 +36,20 @@ items = [
 title = "Theme"
 items = [
   { label = "Pick theme", each = "nejen theme list", run = "nejen theme set {}" },
+  { label = "Tweak colors (picker)", menu = "tweak-colors" },
+  { label = "Clone current theme", run = "nejen theme clone" },
   { label = "Wallpaper", menu = "wallpaper" },
+]
+
+[menu.tweak-colors]
+title = "Tweak Colors"
+items = [
+  { label = "Main Theme Color (Mono)", run = "nejen theme tweak main" },
+  { label = "Background Color", run = "nejen theme tweak background" },
+  { label = "Foreground (Text) Color", run = "nejen theme tweak foreground" },
+  { label = "Border Color (Dim)", run = "nejen theme tweak border" },
+  { label = "Error Color (Red)", run = "nejen theme tweak error" },
+  { label = "Warning Color (Yellow)", run = "nejen theme tweak warning" },
 ]
 
 [menu.wallpaper]

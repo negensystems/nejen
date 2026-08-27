@@ -353,6 +353,17 @@ func runInstall(args []string) {
 		installWarn("Skipping package install (--no-packages) - assuming they're already present.")
 	}
 
+	installLog("Compiling custom Waybar modules (timer, nordvpn, tradingview)...")
+	if err := exec.Command("go", "install", "github.com/takumi/waybar-timer@latest").Run(); err != nil {
+		installWarn("could not install waybar-timer: %v", err)
+	}
+	if err := exec.Command("go", "install", "github.com/takumi/waybar-nordvpn-go@latest").Run(); err != nil {
+		installWarn("could not install waybar-nordvpn-go: %v", err)
+	}
+	if err := exec.Command("go", "install", "github.com/takumi/waybar-tradingview@latest").Run(); err != nil {
+		installWarn("could not install waybar-tradingview: %v", err)
+	}
+
 	if info, err := os.Stat(filepath.Join(nejenPath, "install", "first-run", "pacman-hooks.sh")); err == nil && !info.IsDir() {
 		cmd := exec.Command("bash", filepath.Join(nejenPath, "install", "first-run", "pacman-hooks.sh"))
 		cmd.Stdout = os.Stdout

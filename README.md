@@ -70,9 +70,28 @@ All desktop operations route through the `nejen` binary. Inspect active shortcut
 
 The cheat sheet is generated directly from `keymap.toml` to stay in sync with your config:
 
-![The searchable keybinding sheet, grouped by section](docs/images/keys.png)
+## Usage
 
-### Core & System
+NEJEN is managed through a single command, `nejen`. Subcommands provide access to settings, actions, and system states.
+
+### Core Shortcuts
+
+These are the essential bindings for navigating the desktop and managing windows:
+
+| Action | Key |
+| --- | --- |
+| **Open Terminal** | `Super+Enter` (`Super+Return`) |
+| **Open Terminal (tmux)** | `Super+Alt+Enter` |
+| **Move Focus** | `Super + H/J/K/L` (Vim directional) |
+| **Move Window** | `Super + Shift + H/J/K/L` |
+| **Toggle Floating** | `Super+T` |
+| **Drag Floating Window** | `Super + Left Click` (hold and drag) |
+| **Resize Floating Window** | `Super + Right Click` (hold and drag) |
+| **Switch Workspace** | `Super + 1-0` |
+| **Move to Workspace** | `Super + Shift + 1-0` |
+| **Close Window** | `Super+Q` |
+
+### General
 
 | Command | Description |
 | --- | --- |
@@ -132,6 +151,17 @@ Place your overrides in the corresponding files. These load last and take priori
 * **Wallpapers**: `~/.config/nejen/backgrounds/`
 
 The files these sit alongside (`~/.config/hypr/hyprland.conf`, `~/.config/waybar/style.css`, and the rest) are generated, carry a `DO NOT EDIT` header, and *are* rewritten on every install and update. Edit the override file, not the generated one.
+
+### Creating Custom Color Themes
+
+NEJEN uses a universal color palette. When you change a theme color, it automatically applies to Waybar, Alacritty, Hyprlock, Neovim, and everything else in the system.
+
+To create your own color theme:
+1. Open the hub (`Super+N`) and select **Theme > Clone current theme**.
+2. (Or run `nejen theme clone my-theme` in the terminal).
+3. The system will create a copy of the current theme and open `~/.config/nejen/themes/<your-theme>/theme.toml` in your editor.
+4. Edit the HEX color codes under the `[palette]` block to your liking.
+5. Save the file and run `nejen theme set <your-theme>` to instantly apply your new colors across the entire system!
 
 ## Wallpapers
 
