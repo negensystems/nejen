@@ -220,6 +220,7 @@ Hardware & utilities
   dnd toggle                Toggle notification Do Not Disturb
   idle toggle               Toggle the sleep inhibitor (caffeine)
   audio switch              Cycle the active audio output device
+  browser [cmd]             Web browser: list, set, select, current
   keymap render             Re-render Hyprland keybindings from keymap.toml
 
 Every shipped shortcut: nejen keys (Super+/). Everything else: nejen hub (Super+N).
@@ -244,7 +245,7 @@ func runOpenBrowser(args []string) {
 		"/usr/share/applications",
 	}
 
-	var browserBin string
+	var browserCmd []string
 	for _, dir := range dirs {
 		desktopFile := filepath.Join(dir, desktopId)
 		if content, err := os.ReadFile(desktopFile); err == nil {
@@ -252,20 +253,20 @@ func runOpenBrowser(args []string) {
 			for _, line := range lines {
 				if strings.HasPrefix(line, "Exec=") {
 					execCmd := strings.TrimPrefix(line, "Exec=")
-					parts := strings.Split(execCmd, " ")
-					if len(parts) > 0 {
-						browserBin = parts[0]
+					tokens := parseDesktopExec(execCmd)
+					if len(tokens) > 0 {
+						browserCmd = tokens
 						break
 					}
 				}
 			}
-			if browserBin != "" {
+			if len(browserCmd) > 0 {
 				break
 			}
 		}
 	}
 
-	if browserBin == "" {
+	if len(browserCmd) == 0 {
 		fmt.Fprintf(os.Stderr, "nejen open browser: no default browser found (xdg-settings said '%s')\n", desktopId)
 		os.Exit(1)
 	}
@@ -279,7 +280,7 @@ func runOpenBrowser(args []string) {
 	}
 
 	var finalArgs []string
-	finalArgs = append(finalArgs, browserBin)
+	finalArgs = append(finalArgs, browserCmd...)
 	for _, arg := range args {
 		if arg == "--private" {
 			finalArgs = append(finalArgs, privateFlag)

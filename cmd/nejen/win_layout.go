@@ -36,5 +36,5 @@ func runWinLayout(args []string) {
 	}
 
 	exec.Command("hyprctl", "-q", "keyword", "workspace", fmt.Sprintf("%s, layout:%s", wsID, target)).Run()
-	exec.Command("notify-send", fmt.Sprintf("󱂬    Workspace layout: %s", target)).Run()
+	exec.Command("notify-send", fmt.Sprintf("%s  Workspace layout: %s", iconLayout, target)).Run()
 }

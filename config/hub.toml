@@ -25,6 +25,7 @@ items = [
   { label = "Toggles", menu = "toggles" },
   { label = "Displays", menu = "displays" },
   { label = "Connect", menu = "connect" },
+  { label = "Default browser", each = "nejen browser list --names", run = "nejen browser set '{}'" },
   { label = "Keys", run = "nejen keys" },
   { label = "Update", run = "nejen open tui nejen update" },
   { label = "Doctor", run = "nejen open tui nejen doctor" },

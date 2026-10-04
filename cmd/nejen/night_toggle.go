@@ -30,10 +30,10 @@ func runNightToggle(args []string) {
 
 	if current == dayTemp {
 		exec.Command("hyprctl", "hyprsunset", "temperature", warmTemp).Run()
-		exec.Command("notify-send", "  Night light on").Run()
+		exec.Command("notify-send", iconMoon+"  Night light on").Run()
 	} else {
 		exec.Command("hyprctl", "hyprsunset", "temperature", dayTemp).Run()
-		exec.Command("notify-send", "   Night light off").Run()
+		exec.Command("notify-send", iconSun+"  Night light off").Run()
 	}
 
 	home, _ := os.UserHomeDir()

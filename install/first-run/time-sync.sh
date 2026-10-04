@@ -21,7 +21,7 @@ if sudo timedatectl set-ntp true; then
 else
   # Send a notification if enabling NTP fails.
   echo "nejen: could not enable NTP"
-  notify-send "󰥔    Clock Not Syncing" "The system clock is not synchronized and will drift. Once you are online, run: sudo timedatectl set-ntp true" -u critical
+  notify-send "􀀣  Clock Not Syncing" "The system clock is not synchronized and will drift. Once you are online, run: sudo timedatectl set-ntp true" -u critical
 fi
 
 # We don't touch the RTC to avoid dual-boot issues.

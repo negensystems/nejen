@@ -12,6 +12,10 @@ import (
 	"strings"
 )
 
+func indicator(glyph, tooltip string) {
+	fmt.Printf(`{"text": "%s", "tooltip": "%s", "class": "active"}`+"\n", barIcon(glyph), tooltip)
+}
+
 func init() {
 	registerCommand("dnd status", runDndStatus)
 	registerCommand("idle status", runIdleStatus)
@@ -22,7 +26,7 @@ func init() {
 func runDndStatus(args []string) {
 	out, err := exec.Command("makoctl", "mode").Output()
 	if err == nil && strings.Contains(string(out), "do-not-disturb") {
-		fmt.Println(`{"text": "󰂛", "tooltip": "Notifications silenced", "class": "active"}`)
+		indicator(iconBellOff, "Notifications silenced")
 		return
 	}
 	fmt.Println(`{"text": ""}`)
@@ -34,13 +38,13 @@ func runIdleStatus(args []string) {
 		fmt.Println(`{"text": ""}`)
 		return
 	}
-	fmt.Println(`{"text": "󱫖", "tooltip": "Idle locking disabled", "class": "active"}`)
+	indicator(iconCoffee, "Idle locking disabled")
 }
 
 // runScreenrecordStatus is visible only while gpu-screen-recorder is capturing.
 func runScreenrecordStatus(args []string) {
 	if exec.Command("pgrep", "-f", recorderPattern).Run() == nil {
-		fmt.Println(`{"text": "󰻂", "tooltip": "Recording - click to stop", "class": "active"}`)
+		indicator(iconRecord, "Recording - click to stop")
 		return
 	}
 	fmt.Println(`{"text": ""}`)

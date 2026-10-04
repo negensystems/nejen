@@ -410,6 +410,30 @@ func runInstall(args []string) {
 		linkTo(filepath.Join(nejenPath, "mark.png"), markTarget)
 	}
 
+	// NEJEN's icons are a font, because the bar, notifications and the
+	// terminal can only draw text: config/fonts/NegenIcons.ttf (see the README
+	// beside it). A packaged install already has it under /usr/share/fonts;
+	// the link covers a git-clone install.
+	installLog("Installing the Negen Icons font...")
+	fontsDir := filepath.Join(home, ".local", "share", "fonts")
+	os.MkdirAll(fontsDir, 0755)
+	fontSrc := filepath.Join(nejenPath, "config", "fonts", "NegenIcons.ttf")
+	fontTarget := filepath.Join(fontsDir, "NegenIcons.ttf")
+	linked, _ := os.Readlink(fontTarget)
+	linkTo(fontSrc, fontTarget)
+	if err := exec.Command("fc-cache", "-f", fontsDir).Run(); err != nil {
+		installWarn("could not refresh the font cache: %v", err)
+	}
+	// A running program keeps the font list it started with, so the first time
+	// the font arrives the two long-lived ones that draw it would show empty
+	// boxes until the next login. Restart them, and only then.
+	if linked != fontSrc {
+		exec.Command("systemctl", "--user", "try-restart", "mako.service").Run()
+		if exec.Command("pgrep", "-x", "waybar").Run() == nil {
+			runBarRestart(nil)
+		}
+	}
+
 	installLog("Activating default theme (nejen theme set nejen)...")
 	cmd := exec.Command(filepath.Join(nejenPath, "bin", "nejen"), "theme", "set", "nejen")
 	cmd.Stdout = os.Stdout

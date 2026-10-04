@@ -14,9 +14,9 @@ func runDndToggle(args []string) {
 
 	out, _ := exec.Command("makoctl", "mode").Output()
 	if strings.Contains(string(out), "do-not-disturb") {
-		exec.Command("notify-send", "󰂛    Do not disturb on").Run()
+		exec.Command("notify-send", iconBellOff+"  Do not disturb on").Run()
 	} else {
-		exec.Command("notify-send", "󰂚    Do not disturb off").Run()
+		exec.Command("notify-send", iconBell+"  Do not disturb off").Run()
 	}
 
 	exec.Command("pkill", "-RTMIN+10", "waybar").Run()

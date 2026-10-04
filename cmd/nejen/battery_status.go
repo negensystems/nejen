@@ -43,20 +43,12 @@ func runBatteryStatus(args []string) {
 		}
 	}
 
-	icons := []string{"󰂎", "󰁺", "󰁻", "󰁼", "󰁽", "󰁾", "󰁿", "󰂀", "󰂁", "󰂂", "󰁹"}
 	var icon string
 	if state == "Charging" {
-		icon = "󰂄"
+		icon = iconBolt
 	} else {
 		levelInt, _ := strconv.Atoi(level)
-		idx := levelInt / 10
-		if idx < 0 {
-			idx = 0
-		}
-		if idx > 10 {
-			idx = 10
-		}
-		icon = icons[idx]
+		icon = batteryIcon(levelInt)
 	}
 
 	if level == "" {

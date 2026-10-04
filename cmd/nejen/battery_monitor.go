@@ -59,7 +59,7 @@ func runBatteryMonitor(args []string) {
 	if state == "Discharging" && level <= threshold {
 		if _, err := os.Stat(marker); os.IsNotExist(err) {
 			exec.Command("notify-send", "-u", "critical", "-i", "battery-caution", "-t", "30000",
-				"󱐋 Plug in soon", fmt.Sprintf("Battery at %d%%", level)).Run()
+				iconBolt+"  Plug in soon", fmt.Sprintf("Battery at %d%%", level)).Run()
 			os.WriteFile(marker, []byte(""), 0644)
 		}
 	} else {

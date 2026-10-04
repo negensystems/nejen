@@ -37,14 +37,14 @@ mode = Plymouth.GetMode();
 # initramfs the freetype label backend draws everything with the one embedded
 # face (see Font= in nejen.plymouth) and honours only the size.
 if (screen.h >= 2000) {
-    font.prompt = "Sans 40";
+    font.prompt = "Sans 32";
     font.status = "Sans 30";
 } else {
     if (screen.h >= 1300) {
-        font.prompt = "Sans 26";
+        font.prompt = "Sans 21";
         font.status = "Sans 20";
     } else {
-        font.prompt = "Sans 17";
+        font.prompt = "Sans 14";
         font.status = "Sans 13";
     }
 }
@@ -124,7 +124,13 @@ if (mode != "boot") {
 # something is the one thing with a frame around it. Built up front and hidden,
 # so the prompt appears instantly rather than after a round of image scaling.
 
-field.image = fit_width(Image("field.png"), Math.Int(screen.w * 0.30));
+#
+# field.png carries a margin for its glow, like the mark: 1140x360 authored, of
+# which the panel is the middle 900x120. On screen the panel comes out as wide
+# as the progress line it replaces, a small input under the mark rather than a
+# second headline.
+
+field.image = fit_width(Image("field.png"), Math.Int(screen.w * 0.20));
 field.w = field.image.GetWidth();
 field.h = field.image.GetHeight();
 field.sprite = Sprite(field.image);
@@ -134,14 +140,17 @@ field.sprite.SetPosition(field.x, field.y, 25);
 field.sprite.SetOpacity(0);
 # Vertical centre of the drawn panel inside its glow margin.
 field.cy = field.y + field.h / 2;
+# The drawn panel itself: a third of the sprite's height, centred in it.
+field.panel_h = Math.Int(field.h / 3);
+field.panel_y = field.cy - field.panel_h / 2;
 # Usable width for bullets, inside the panel's rounded ends.
-field.inner = Math.Int(field.w * 0.72);
+field.inner = Math.Int(field.w * 0.67);
 
-bullet.size = Math.Int(field.h * 0.22);
+bullet.size = Math.Int(field.panel_h * 0.52);
 bullet.image = Image("bullet.png").Scale(bullet.size, bullet.size);
 bullet.gap = Math.Int(bullet.size * 1.65);
 
-caret.h = Math.Int(field.h * 0.34);
+caret.h = Math.Int(field.panel_h * 0.50);
 caret.image = fit_width(Image("caret.png"), Math.Int(caret.h * 32 / 160));
 caret.w = caret.image.GetWidth();
 caret.sprite = Sprite(caret.image);
@@ -202,8 +211,9 @@ Plymouth.SetBootProgressFunction(progress_callback);
 
 # ---- prompt line -------------------------------------------------------------
 # Whatever cryptsetup asks is shown verbatim, shrunk if it would outrun the
-# field. Truncating would hide which device is being unlocked, or that the
-# last attempt failed.
+# mark above it. Truncating would hide which device is being unlocked, or that
+# the last attempt failed. The line may run wider than the field: it is a
+# label over a small input, and sits just above the panel, inside the glow.
 
 fun set_prompt (text, r, g, b) {
     image = Image.Text(text, r, g, b, 1, font.prompt);
@@ -211,12 +221,12 @@ fun set_prompt (text, r, g, b) {
         prompt.sprite.SetOpacity(0);
         return;
     }
-    if (image.GetWidth() > field.w) {
-        image = fit_width(image, field.w);
+    if (image.GetWidth() > Math.Int(screen.w * 0.35)) {
+        image = fit_width(image, Math.Int(screen.w * 0.35));
     }
     prompt.sprite.SetImage(image);
     prompt.sprite.SetPosition(screen.cx - image.GetWidth() / 2,
-                              field.y - image.GetHeight() - Math.Int(screen.h * 0.012),
+                              field.panel_y - image.GetHeight() - Math.Int(screen.h * 0.018),
                               30);
     prompt.sprite.SetOpacity(1);
 }

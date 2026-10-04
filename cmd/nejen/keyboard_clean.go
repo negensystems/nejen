@@ -350,7 +350,7 @@ func superviseClean(duration time.Duration) {
 	restore := func() {
 		once.Do(func() {
 			leaveCleanSubmap()
-			exec.Command("notify-send", "-t", "2500", "󰌌    Keyboard back on").Run()
+			exec.Command("notify-send", "-t", "2500", iconKeyboard+"  Keyboard back on").Run()
 		})
 	}
 
@@ -366,7 +366,7 @@ func superviseClean(duration time.Duration) {
 
 	// Say it before the keys die, so the notification is on screen while
 	// the user still has a chance to read it.
-	exec.Command("notify-send", "-t", "2000", "󰌐    Cleaning mode",
+	exec.Command("notify-send", "-t", "2000", iconKeyboardOff+"  Cleaning mode",
 		fmt.Sprintf("Keyboard off for %s. Middle click to finish early.", humanCleanDuration(duration))).Run()
 
 	enterCleanSubmap()
@@ -471,7 +471,7 @@ func cleanOverlayLines(left time.Duration) []string {
 		secs = 0
 	}
 	return []string{
-		"󰌐",
+		iconKeyboardOff,
 		"",
 		"C L E A N I N G   M O D E",
 		"",
@@ -537,7 +537,7 @@ func runKeyboardStatus(args []string) {
 
 	left := int(time.Until(deadline).Round(time.Second) / time.Second)
 	status := map[string]string{
-		"text":    "󰌐",
+		"text":    barIcon(iconKeyboardOff),
 		"tooltip": fmt.Sprintf("Keyboard off for cleaning - %ds left, click to finish", left),
 		"class":   "active",
 	}

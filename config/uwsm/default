@@ -7,6 +7,11 @@ export TERMINAL=xdg-terminal-exec
 
 export EDITOR=nvim
 
+# `nejen browser set` keeps its pick in state; this file is the shipped copy
+# and is never rewritten.
+[ -r "$HOME/.local/state/nejen/browser" ] &&
+  export BROWSER="$(cat "$HOME/.local/state/nejen/browser")"
+
 # Where `nejen screenshot` and `nejen screenrecord` save their output.
 export NEJEN_SCREENSHOT_DIR="$HOME/Pictures/Screenshots"
 export NEJEN_SCREENRECORD_DIR="$HOME/Videos"

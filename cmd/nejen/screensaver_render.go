@@ -227,9 +227,9 @@ func runScreensaverRender(args []string) {
 		if cap != "" {
 			batStr := cap + "%"
 			if stat == "Charging" {
-				batStr += " ⚡"
+				batStr += " " + iconBolt
 			} else if stat == "Full" {
-				batStr = "Full 󰁹"
+				batStr = "Full " + batteryIcon(100)
 			}
 			cv.Text(cx-len([]rune(batStr))/2, cy+3, batStr, pal["border"], false)
 		}

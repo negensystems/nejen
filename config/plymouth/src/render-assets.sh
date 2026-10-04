@@ -41,9 +41,9 @@ MARK_SRC=../../../logo.txt
 # the blown-up art keeps the proportions the wordmark has in About.
 CELL_W=40
 CELL_H=64
-FIELD_W=1360          # passphrase field
-FIELD_H=180
-FIELD_R=26
+FIELD_W=900           # passphrase field
+FIELD_H=120
+FIELD_R=18
 MARGIN=120            # transparent padding the outer glow bleeds into
 
 # ---- panel ------------------------------------------------------------------

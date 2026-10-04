@@ -38,16 +38,18 @@ LINE_X=$((CX - LINE_W / 2))
 LINE_Y=$((MARK_BOTTOM + H * 75 / 1000))
 HEAD=$((H * 18 / 1000))
 
-FIELD_W=$((W * 30 / 100))
+FIELD_W=$((W * 20 / 100))
 FIELD_H=$((FIELD_W * $(i $A/field.png %h) / $(i $A/field.png %w)))
 FIELD_X=$((CX - FIELD_W / 2))
 FIELD_Y=$((MARK_BOTTOM + H * 55 / 1000))
 FIELD_CY=$((FIELD_Y + FIELD_H / 2))
+PANEL_H=$((FIELD_H / 3))
+PANEL_Y=$((FIELD_CY - PANEL_H / 2))
 
-BULLET=$((FIELD_H * 22 / 100))
+BULLET=$((PANEL_H * 52 / 100))
 GAP=$((BULLET * 165 / 100))
-CARET_H=$((FIELD_H * 34 / 100))
-FS=$((H * 185 / 10000))
+CARET_H=$((PANEL_H * 50 / 100))
+FS=$((H * 148 / 10000))
 
 base() {
   magick -size "${W}x${H}" gradient:'#08080a-#0a0a12' \
@@ -84,7 +86,7 @@ CMD+=(\( "$A/caret.png" -resize "x${CARET_H}" \)
       -geometry "+$((START + ROW + BULLET * 6 / 10))+$((FIELD_CY - CARET_H / 2))" -composite)
 CMD+=(\( -background none -fill "$MUTED" -font "$PROMPT_FONT" -pointsize "$FS"
          label:'Please enter passphrase for disk root:' \)
-      -gravity north -geometry "+0+$((FIELD_Y - FS * 3 / 2))" -composite)
+      -gravity north -geometry "+0+$((PANEL_Y - H * 18 / 1000 - FS * 13 / 10))" -composite)
 CMD+=(-resize 1600x "$OUT/passphrase.png")
 "${CMD[@]}"
 

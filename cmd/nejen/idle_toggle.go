@@ -26,7 +26,7 @@ func runIdleToggle(args []string) {
 			f.Close()
 		}
 
-		exec.Command("notify-send", "󱫖    Staying awake: idle locking disabled").Run()
+		exec.Command("notify-send", iconCoffee+"  Staying awake: idle locking disabled").Run()
 	} else {
 		os.Remove(idleOffFlag)
 
@@ -37,7 +37,7 @@ func runIdleToggle(args []string) {
 		cmd.Stdin = nil
 		cmd.Start()
 
-		exec.Command("notify-send", "󱫖    Idle locking enabled").Run()
+		exec.Command("notify-send", iconLock+"  Idle locking enabled").Run()
 	}
 
 	exec.Command("pkill", "-RTMIN+9", "waybar").Run()

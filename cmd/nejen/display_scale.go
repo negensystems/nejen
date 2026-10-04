@@ -68,5 +68,5 @@ func runDisplayScale(args []string) {
 	if next == 1.0 || next == 2.0 || next == 3.0 {
 		nextStr = fmt.Sprintf("%.0f", next) // bash output had 1, 2, 3 instead of 1.0
 	}
-	exec.Command("notify-send", fmt.Sprintf("󰍹    Display scale: %sx", nextStr)).Run()
+	exec.Command("notify-send", fmt.Sprintf("%s  Display scale: %sx", iconMonitor, nextStr)).Run()
 }
