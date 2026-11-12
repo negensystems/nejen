@@ -22,14 +22,7 @@ func runKeys(args []string) {
 
 	sheet := cheatsheet(mergedKeymap())
 
-	isTerm := false
-	if stat, err := os.Stdout.Stat(); err == nil {
-		if (stat.Mode() & os.ModeCharDevice) != 0 {
-			isTerm = true
-		}
-	}
-
-	if isTerm || printMode {
+	if isTerminal(os.Stdout) || printMode {
 		fmt.Println(sheet)
 	} else {
 

@@ -293,14 +293,7 @@ func runBrowserSelect(args []string) {
 
 	selectedName := ""
 
-	isTerm := false
-	if stat, err := os.Stdout.Stat(); err == nil {
-		if (stat.Mode() & os.ModeCharDevice) != 0 {
-			isTerm = true
-		}
-	}
-
-	if isTerm {
+	if isTerminal(os.Stdout) {
 		gumCmd := exec.Command("gum", "filter", "--height", "10", "--header", "Select Default Browser", "--placeholder", "Type to filter...")
 		gumCmd.Stdin = strings.NewReader(strings.Join(names, "\n"))
 		var gumOut bytes.Buffer
