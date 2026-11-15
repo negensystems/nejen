@@ -94,10 +94,7 @@ func runOpenWebapp(args []string) {
 						}
 					}
 					if addr != "" {
-						hyprctlPath, err := exec.LookPath("hyprctl")
-						if err == nil {
-							syscall.Exec(hyprctlPath, []string{"hyprctl", "dispatch", "focuswindow", "address:" + addr}, os.Environ())
-						}
+						hyprFocusWindowExec(addr)
 						os.Exit(1)
 					}
 				}

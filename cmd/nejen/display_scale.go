@@ -56,13 +56,11 @@ func runDisplayScale(args []string) {
 		next = 1.0
 	}
 
-	exec.Command("hyprctl", "-q", "keyword", "misc:disable_scale_notification", "true").Run()
-	monitorArg := fmt.Sprintf("%s,%dx%d@%f,auto,%f", focused.Name, focused.Width, focused.Height, focused.RefreshRate, next)
-	// Remove trailing zeros for the string format to match script if needed, but hyprctl handles floats fine.
-	// Actually %v with next is better to output "1" instead of "1.000000" if we want exact string
-	monitorArg = fmt.Sprintf("%s,%dx%d@%f,auto,%v", focused.Name, focused.Width, focused.Height, focused.RefreshRate, next)
-	exec.Command("hyprctl", "-q", "keyword", "monitor", monitorArg).Run()
-	exec.Command("hyprctl", "-q", "keyword", "misc:disable_scale_notification", "false").Run()
+	mode := fmt.Sprintf("%dx%d@%f", focused.Width, focused.Height, focused.RefreshRate)
+	hyprEval(fmt.Sprintf(
+		`hl.config({ misc = { disable_scale_notification = true } }); hl.monitor({ output = %s, mode = %s, position = "auto", scale = %v }); hl.config({ misc = { disable_scale_notification = false } })`,
+		luaQuote(focused.Name), luaQuote(mode), next,
+	))
 
 	nextStr := fmt.Sprintf("%v", next)
 	if next == 1.0 || next == 2.0 || next == 3.0 {

@@ -13,10 +13,10 @@ func runWinSquare(args []string) {
 	cmd := exec.Command("hyprctl", "getoption", "layout:single_window_aspect_ratio")
 	out, err := cmd.Output()
 	if err == nil && strings.Contains(string(out), "[1, 1]") {
-		exec.Command("hyprctl", "-q", "keyword", "layout:single_window_aspect_ratio", "0 0").Run()
+		hyprEval("hl.config({ layout = { single_window_aspect_ratio = { 0, 0 } } })")
 		exec.Command("notify-send", iconSquare+"  Single-window square aspect off").Run()
 	} else {
-		exec.Command("hyprctl", "-q", "keyword", "layout:single_window_aspect_ratio", "1 1").Run()
+		hyprEval("hl.config({ layout = { single_window_aspect_ratio = { 1, 1 } } })")
 		exec.Command("notify-send", iconSquare+"  Single-window square aspect on").Run()
 	}
 }

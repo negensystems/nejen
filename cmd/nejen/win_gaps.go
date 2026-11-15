@@ -22,11 +22,15 @@ func runWinGaps(args []string) {
 		return
 	}
 
-	customVal, _ := option["custom"].(string)
-	fields := strings.Fields(customVal)
+	// Hyprland 0.57+ reports CSS gap values in "css" (earlier versions used "custom").
+	gapVal, _ := option["css"].(string)
+	if gapVal == "" {
+		gapVal, _ = option["custom"].(string)
+	}
+	fields := strings.Fields(gapVal)
 	if len(fields) > 0 && fields[0] == "0" {
-		exec.Command("hyprctl", "-q", "--batch", "keyword general:gaps_out 10; keyword general:gaps_in 5; keyword general:border_size 2").Run()
+		hyprEval("hl.config({ general = { gaps_out = 10, gaps_in = 5, border_size = 2 } })")
 	} else {
-		exec.Command("hyprctl", "-q", "--batch", "keyword general:gaps_out 0; keyword general:gaps_in 0; keyword general:border_size 0").Run()
+		hyprEval("hl.config({ general = { gaps_out = 0, gaps_in = 0, border_size = 0 } })")
 	}
 }

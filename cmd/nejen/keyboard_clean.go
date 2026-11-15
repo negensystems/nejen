@@ -36,7 +36,7 @@ func init() {
 }
 
 const (
-	// cleanSubmap must match the submap name in config/hypr/core/cleaning.conf.
+	// cleanSubmap must match the submap name in config/hypr/core/cleaning.lua.
 	cleanSubmap = "nejen-clean"
 	// cleanClass is the app-id of the full-screen overlay, and the handle
 	// used to close it again.
@@ -157,14 +157,14 @@ func cleanLive() (pid int, deadline time.Time, live bool) {
 }
 
 func enterCleanSubmap() {
-	exec.Command("hyprctl", "dispatch", "submap", cleanSubmap).Run()
+	hyprDispatchLua(fmt.Sprintf("hl.dsp.submap(%s)", luaQuote(cleanSubmap)))
 }
 
 // leaveCleanSubmap is written to be safe to call when cleaning mode is not
 // running: resetting the submap that is already default is a no-op, and so
 // is closing an overlay that is not open.
 func leaveCleanSubmap() {
-	exec.Command("hyprctl", "dispatch", "submap", "reset").Run()
+	hyprDispatchLua(`hl.dsp.submap("reset")`)
 	closeCleanOverlay()
 	os.Remove(cleanStatePath())
 	exec.Command("pkill", cleanSignal, "waybar").Run()
@@ -209,7 +209,7 @@ func cleanOverlayWindows() (addrs []string, pids []int) {
 func closeCleanOverlay() {
 	addrs, pids := cleanOverlayWindows()
 	for _, addr := range addrs {
-		exec.Command("hyprctl", "dispatch", "closewindow", "address:"+addr).Run()
+		hyprDispatchLua(fmt.Sprintf("hl.dsp.window.close({ window = %s })", luaQuote("address:"+addr)))
 	}
 	for _, pid := range pids {
 		for i := 0; i < 10 && processAlive(pid); i++ {
@@ -431,7 +431,7 @@ func openCleanOverlay(deadline time.Time) {
 		return
 	}
 
-	exec.Command("hyprctl", "dispatch", "exec", "--", launch).Run()
+	hyprDispatchLua(fmt.Sprintf("hl.dsp.exec_cmd(%s)", luaQuote(launch)))
 }
 
 // runCleanOverlay draws the countdown inside the overlay window. It ends on

@@ -43,9 +43,9 @@ func runOpenFocus(args []string) {
 				}
 
 				if targetAddr != "" {
-					cmdPath, _ := exec.LookPath("hyprctl")
-					execArgs := []string{"hyprctl", "dispatch", "focuswindow", "address:" + targetAddr}
-					syscall.Exec(cmdPath, execArgs, os.Environ())
+					if err := hyprFocusWindowExec(targetAddr); err != nil {
+						os.Exit(1)
+					}
 					os.Exit(0)
 				}
 			}

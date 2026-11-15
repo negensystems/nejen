@@ -1,0 +1,46 @@
+-- NEJEN theme for Hyprland (slate blue palette)
+
+-- https://wiki.hypr.land/configuring/core/config-options/
+hl.config({
+    general = {
+        gaps_in = 3,
+        gaps_out = 3,
+
+        -- Border size - sharp, glowing border
+        border_size = 2,
+
+        -- Border colors come from the rendered theme
+        -- (~/.local/state/nejen/theme/hyprland.lua)
+
+        -- Master layout (user preference)
+        layout = "master",
+    },
+
+    decoration = {
+        -- Sharp, industrial mecha display corner rounding
+        rounding = 4,
+
+        -- Translucency to show the background HUD details
+        active_opacity = 0.97,
+        inactive_opacity = 0.88,
+
+        -- Slate blue drop shadow on windows
+        shadow = {
+            enabled = true,
+            range = 10,
+            render_power = 4,
+            color = "rgba(4a4f8a40)",
+            color_inactive = "rgba(00000022)",
+        },
+
+        -- Glassmorphism panel blur
+        blur = {
+            enabled = true,
+            size = 3,
+            passes = 3,
+            special = true,
+            brightness = 0.55,
+            contrast = 0.80,
+        },
+    },
+})

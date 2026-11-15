@@ -35,6 +35,6 @@ func runWinLayout(args []string) {
 		target = "scrolling"
 	}
 
-	exec.Command("hyprctl", "-q", "keyword", "workspace", fmt.Sprintf("%s, layout:%s", wsID, target)).Run()
+	hyprEval(fmt.Sprintf("hl.workspace_rule({ workspace = %s, layout = %s })", luaQuote(wsID), luaQuote(target)))
 	exec.Command("notify-send", fmt.Sprintf("%s  Workspace layout: %s", iconLayout, target)).Run()
 }

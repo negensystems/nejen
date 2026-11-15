@@ -57,7 +57,7 @@ func runScreensaverShow(args []string) {
 				opts = append(opts, "--config-file", cfg)
 			}
 			opts = append(opts, "-e", "nejen", "screensaver")
-			exec.Command("hyprctl", "dispatch", "exec", "--", "alacritty "+strings.Join(opts, " ")).Run()
+			hyprDispatchLua(fmt.Sprintf("hl.dsp.exec_cmd(%s)", luaQuote("alacritty "+strings.Join(opts, " "))))
 		} else if strings.Contains(terminalID, "ghostty") {
 			opts := []string{"--class=" + screensaverClass, "--font-size=18"}
 			cfg := filepath.Join(nejenPath, "config", "screensaver", "ghostty")
@@ -65,20 +65,21 @@ func runScreensaverShow(args []string) {
 				opts = append(opts, fmt.Sprintf("--config-file=%s", cfg))
 			}
 			opts = append(opts, "-e", "nejen", "screensaver")
-			exec.Command("hyprctl", "dispatch", "exec", "--", "ghostty "+strings.Join(opts, " ")).Run()
+			hyprDispatchLua(fmt.Sprintf("hl.dsp.exec_cmd(%s)", luaQuote("ghostty "+strings.Join(opts, " "))))
 		} else if strings.Contains(terminalID, "kitty") {
-			exec.Command("hyprctl", "dispatch", "exec", "--", fmt.Sprintf("kitty --class=%s --override font_size=18 --override window_padding_width=0 -e nejen screensaver", screensaverClass)).Run()
+			cmd := fmt.Sprintf("kitty --class=%s --override font_size=18 --override window_padding_width=0 -e nejen screensaver", screensaverClass)
+			hyprDispatchLua(fmt.Sprintf("hl.dsp.exec_cmd(%s)", luaQuote(cmd)))
 		} else {
 			exec.Command("notify-send", "Screensaver needs a supported terminal", "Set the default to Alacritty, Ghostty, or Kitty.").Run()
 		}
 	}
 
 	for _, m := range monitors {
-		exec.Command("hyprctl", "dispatch", "focusmonitor", m.Name).Run()
+		hyprDispatchLua(fmt.Sprintf("hl.dsp.focus({ monitor = %s })", luaQuote(m.Name)))
 		openScreensaverWindow()
 	}
 
 	if cameFrom != "" {
-		exec.Command("hyprctl", "dispatch", "focusmonitor", cameFrom).Run()
+		hyprDispatchLua(fmt.Sprintf("hl.dsp.focus({ monitor = %s })", luaQuote(cameFrom)))
 	}
 }

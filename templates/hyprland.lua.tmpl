@@ -1,0 +1,14 @@
+-- ${meta.name}: Hyprland theme colors, written by `nejen theme render`.
+-- Loaded by config/hypr/hyprland.lua as ~/.local/state/nejen/theme/hyprland.lua.
+
+activeBorderColor = "rgba(${palette.border.nohash}ff)"
+inactiveBorderColor = "${hyprland.inactive_border}"
+
+hl.config({
+    general = {
+        col = {
+            active_border = activeBorderColor,
+            inactive_border = inactiveBorderColor,
+        },
+    },
+})

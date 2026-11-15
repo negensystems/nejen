@@ -144,13 +144,13 @@ Place your overrides in the corresponding files. These load last and take priori
 
 * **Keybindings**: `~/.config/nejen/keymap.toml`
 * **Hub Actions**: `~/.config/nejen/hub.toml`
-* **Hyprland Settings**: `~/.config/hypr/overrides.conf`
+* **Hyprland Settings**: `~/.config/hypr/overrides.lua`
 * **Waybar Styling**: `~/.config/waybar/overrides.css`
 * **Alacritty Configuration**: `~/.config/alacritty/overrides.toml`
 * **Custom Themes**: `~/.config/nejen/themes/<name>/theme.toml`
 * **Wallpapers**: `~/.config/nejen/backgrounds/`
 
-The files these sit alongside (`~/.config/hypr/hyprland.conf`, `~/.config/waybar/style.css`, and the rest) are generated, carry a `DO NOT EDIT` header, and *are* rewritten on every install and update. Edit the override file, not the generated one.
+The files these sit alongside (`~/.config/hypr/hyprland.lua`, `~/.config/waybar/style.css`, and the rest) are generated, carry a `DO NOT EDIT` header, and *are* rewritten on every install and update. Edit the override file, not the generated one.
 
 ### Creating Custom Color Themes
 

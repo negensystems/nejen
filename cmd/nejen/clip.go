@@ -50,5 +50,5 @@ func runClip(args []string) {
 		}
 	}
 
-	exec.Command("hyprctl", "-q", "dispatch", "sendshortcut", fmt.Sprintf("%s, %s, address:%s", mods, key, window.Address)).Run()
+	hyprDispatchLua(fmt.Sprintf("hl.dsp.send_shortcut({ mods = %s, key = %s, window = %s })", luaQuote(mods), luaQuote(key), luaQuote("address:"+window.Address)))
 }

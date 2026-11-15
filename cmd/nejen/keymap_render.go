@@ -5,6 +5,7 @@ import (
 	"os"
 	"path/filepath"
 	"sort"
+	"strconv"
 	"strings"
 
 	"github.com/BurntSushi/toml"
@@ -182,33 +183,155 @@ func mergedKeymap() []Bind {
 	return final
 }
 
+var bindFlagMap = []struct {
+	flag rune
+	opt  string
+}{
+	{'l', "locked"},
+	{'e', "repeating"},
+	{'r', "release"},
+	{'m', "mouse"},
+	{'n', "non_consuming"},
+	{'t', "transparent"},
+	{'i', "ignore_mods"},
+	{'p', "dont_inhibit"},
+	{'o', "long_press"},
+	{'u', "submap_universal"},
+	{'c', "click"},
+	{'g', "drag"},
+}
+
+var directionAliases = map[string]string{
+	"l": "left", "left": "left",
+	"r": "right", "right": "right",
+	"u": "up", "up": "up",
+	"d": "down", "down": "down",
+}
+
+func luaWorkspaceArg(arg string) string {
+	if n, err := strconv.Atoi(arg); err == nil {
+		return strconv.Itoa(n)
+	}
+	return luaQuote(arg)
+}
+
+func luaDispatcher(b Bind) (string, error) {
+	if b.Run != "" {
+		return fmt.Sprintf("hl.dsp.exec_cmd(%s)", luaQuote(b.Run)), nil
+	}
+
+	action := strings.TrimSpace(b.Action)
+	if strings.HasPrefix(action, "hl.") {
+		return action, nil
+	}
+
+	if strings.Contains(b.Flags, "m") {
+		switch action {
+		case "movewindow":
+			return "hl.dsp.window.drag()", nil
+		case "resizewindow":
+			return "hl.dsp.window.resize()", nil
+		}
+	}
+
+	fields := strings.Fields(action)
+	if len(fields) == 0 {
+		return "", fmt.Errorf("empty action in bind %q", b.Keys)
+	}
+
+	switch fields[0] {
+	case "killactive":
+		return "hl.dsp.window.close()", nil
+	case "togglefloating":
+		return `hl.dsp.window.float({ action = "toggle" })`, nil
+	case "fullscreen":
+		if len(fields) > 1 && fields[1] == "1" {
+			return `hl.dsp.window.fullscreen({ mode = "maximized" })`, nil
+		}
+		return "hl.dsp.window.fullscreen()", nil
+	case "movefocus":
+		if len(fields) != 2 {
+			return "", fmt.Errorf("movefocus expects a direction, got %q", action)
+		}
+		dir, ok := directionAliases[strings.ToLower(fields[1])]
+		if !ok {
+			return "", fmt.Errorf("unknown direction %q in %q", fields[1], action)
+		}
+		return fmt.Sprintf("hl.dsp.focus({ direction = %s })", luaQuote(dir)), nil
+	case "movewindow":
+		if len(fields) != 2 {
+			return "", fmt.Errorf("movewindow expects a direction, got %q", action)
+		}
+		dir, ok := directionAliases[strings.ToLower(fields[1])]
+		if !ok {
+			return "", fmt.Errorf("unknown direction %q in %q", fields[1], action)
+		}
+		return fmt.Sprintf("hl.dsp.window.move({ direction = %s })", luaQuote(dir)), nil
+	case "resizeactive":
+		if len(fields) != 3 {
+			return "", fmt.Errorf("resizeactive expects dx dy, got %q", action)
+		}
+		return fmt.Sprintf("hl.dsp.window.resize({ x = %s, y = %s, relative = true })", luaNumberOrQuote(fields[1]), luaNumberOrQuote(fields[2])), nil
+	case "workspace":
+		if len(fields) != 2 {
+			return "", fmt.Errorf("workspace expects a target, got %q", action)
+		}
+		return fmt.Sprintf("hl.dsp.focus({ workspace = %s })", luaWorkspaceArg(fields[1])), nil
+	case "movetoworkspace":
+		if len(fields) != 2 {
+			return "", fmt.Errorf("movetoworkspace expects a target, got %q", action)
+		}
+		return fmt.Sprintf("hl.dsp.window.move({ workspace = %s })", luaWorkspaceArg(fields[1])), nil
+	case "centerwindow":
+		return "hl.dsp.window.center()", nil
+	case "pin":
+		return `hl.dsp.window.pin({ action = "toggle" })`, nil
+	case "pseudo":
+		return "hl.dsp.window.pseudo()", nil
+	case "togglesplit", "swapsplit":
+		return fmt.Sprintf("hl.dsp.layout(%s)", luaQuote(fields[0])), nil
+	case "togglespecialworkspace":
+		if len(fields) > 1 {
+			return fmt.Sprintf("hl.dsp.workspace.toggle_special(%s)", luaQuote(fields[1])), nil
+		}
+		return "hl.dsp.workspace.toggle_special()", nil
+	case "exit":
+		return "hl.dsp.exit()", nil
+	default:
+		return "", fmt.Errorf("unsupported keymap action %q in %q", action, b.Keys)
+	}
+}
+
 func bindLine(b Bind) string {
 	modsList, key := parseChord(b.Keys)
 	var upperMods []string
 	for _, m := range modsList {
 		upperMods = append(upperMods, strings.ToUpper(m))
 	}
-	modstr := strings.Join(upperMods, " ")
-
-	if strings.Contains(b.Flags, "m") {
-		return fmt.Sprintf("bindm = %s, %s, %s", modstr, hyprKey(key), b.Action)
+	chord := hyprKey(key)
+	if len(upperMods) > 0 {
+		chord = strings.Join(upperMods, " + ") + " + " + chord
 	}
 
-	desc := strings.ReplaceAll(b.Desc, ",", ";")
-	var dispatch string
-	if b.Run != "" {
-		dispatch = fmt.Sprintf("exec, %s", b.Run)
-	} else {
-		parts := strings.SplitN(b.Action, " ", 2)
-		disp := parts[0]
-		if len(parts) > 1 && parts[1] != "" {
-			dispatch = fmt.Sprintf("%s, %s", disp, parts[1])
-		} else {
-			dispatch = disp
+	dsp, err := luaDispatcher(b)
+	if err != nil {
+		dieRender(err.Error())
+	}
+
+	var opts []string
+	if b.Desc != "" {
+		opts = append(opts, "desc = "+luaQuote(b.Desc))
+	}
+	for _, entry := range bindFlagMap {
+		if strings.ContainsRune(b.Flags, entry.flag) {
+			opts = append(opts, entry.opt+" = true")
 		}
 	}
 
-	return fmt.Sprintf("bind%sd = %s, %s, %s, %s", b.Flags, modstr, hyprKey(key), desc, dispatch)
+	if len(opts) == 0 {
+		return fmt.Sprintf("hl.bind(%s, %s)", luaQuote(chord), dsp)
+	}
+	return fmt.Sprintf("hl.bind(%s, %s, { %s })", luaQuote(chord), dsp, strings.Join(opts, ", "))
 }
 
 func prettyChord(b Bind) string {
@@ -233,8 +356,8 @@ func prettyChord(b Bind) string {
 
 func renderKeymap(binds []Bind) string {
 	lines := []string{
-		"# Generated by `nejen keymap render` from keymap.toml. Do not edit.",
-		"# Change bindings in ~/.config/nejen/keymap.toml and re-render.",
+		"-- Generated by `nejen keymap render` from keymap.toml. Do not edit.",
+		"-- Change bindings in ~/.config/nejen/keymap.toml and re-render.",
 		"",
 	}
 	for _, b := range binds {
@@ -308,7 +431,7 @@ func runKeymapRender(args []string) {
 		dieRender(fmt.Sprintf("failed to create directory: %v", err))
 	}
 
-	outPath := filepath.Join(outDir, "hyprland.conf")
+	outPath := filepath.Join(outDir, "hyprland.lua")
 	tmpPath := outPath + ".tmp"
 	if err := os.WriteFile(tmpPath, []byte(renderKeymap(binds)), 0644); err != nil {
 		dieRender(fmt.Sprintf("failed to write tmp file: %v", err))
