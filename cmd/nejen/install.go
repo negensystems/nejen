@@ -279,6 +279,46 @@ func runInstallDeps(args []string) {
 	}
 }
 
+func hyprlandLoaderLua(nejenPath string) string {
+	return fmt.Sprintf(`-- %s - DO NOT EDIT, this file is regenerated on install/update.
+-- Layered config: NEJEN defaults first, then your overrides (they win).
+
+local home = os.getenv("HOME") or ""
+local configHome = os.getenv("XDG_CONFIG_HOME")
+if not configHome or configHome == "" then
+    configHome = home .. "/.config"
+end
+
+local nejenPath = os.getenv("NEJEN_PATH")
+if not nejenPath or nejenPath == "" then
+    nejenPath = %s
+end
+
+dofile(nejenPath .. "/config/hypr/hyprland.lua")
+
+local overrides = configHome .. "/hypr/overrides.lua"
+local f = io.open(overrides, "r")
+if f then
+    f:close()
+    dofile(overrides)
+end
+`, genMark, luaQuote(nejenPath))
+}
+
+func hasCustomConfLines(path string) bool {
+	b, err := os.ReadFile(path)
+	if err != nil {
+		return false
+	}
+	for _, line := range strings.Split(string(b), "\n") {
+		trimmed := strings.TrimSpace(line)
+		if trimmed != "" && !strings.HasPrefix(trimmed, "#") {
+			return true
+		}
+	}
+	return false
+}
+
 func runInstall(args []string) {
 	packages := true
 	manifest := "core"
@@ -456,8 +496,12 @@ func runInstall(args []string) {
 	}
 
 	os.MkdirAll(filepath.Join(configDir, "hypr"), 0755)
-	writeGen(filepath.Join(configDir, "hypr", "hyprland.conf"), "# "+genMark+" - DO NOT EDIT, this file is regenerated on install/update.\n# Layered config: NEJEN defaults first, then your overrides (they win).\nsource = $NEJEN_PATH/config/hypr/hyprland.conf\nsource = ~/.config/hypr/overrides.conf")
-	ensureOverride(filepath.Join(configDir, "hypr", "overrides.conf"), "# Your personal Hyprland overrides. Sourced last, so anything here wins over\n# the NEJEN defaults. This file is never touched by NEJEN updates.")
+	writeGen(filepath.Join(configDir, "hypr", "hyprland.lua"), hyprlandLoaderLua(nejenPath))
+	overridesLua := filepath.Join(configDir, "hypr", "overrides.lua")
+	if _, err := os.Stat(overridesLua); os.IsNotExist(err) && hasCustomConfLines(filepath.Join(configDir, "hypr", "overrides.conf")) {
+		installWarn("Found custom settings in ~/.config/hypr/overrides.conf; Hyprland 0.57+ reads Lua only, so move them to ~/.config/hypr/overrides.lua.")
+	}
+	ensureOverride(overridesLua, "-- Your personal Hyprland overrides. Loaded last, so anything here wins over\n-- the NEJEN defaults. This file is never touched by NEJEN updates.")
 
 	writeGen(filepath.Join(configDir, "hypr", "hyprlock.conf"), "# "+genMark+" - DO NOT EDIT, this file is regenerated on install/update.\nsource = $NEJEN_PATH/config/hypr/hyprlock.conf\nsource = ~/.config/hypr/hyprlock-overrides.conf")
 	ensureOverride(filepath.Join(configDir, "hypr", "hyprlock-overrides.conf"), "# Your personal hyprlock overrides. Never touched by NEJEN updates.")

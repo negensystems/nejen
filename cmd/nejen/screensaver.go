@@ -63,7 +63,7 @@ func screensaverRunning() bool {
 
 func runScreensaver(args []string) {
 	leave := func() {
-		exec.Command("hyprctl", "keyword", "cursor:invisible", "false").Run()
+		hyprEval("hl.config({ cursor = { invisible = false } })")
 		exec.Command("pkill", "-f", screensaverClass).Run()
 		os.Exit(0)
 	}
@@ -76,7 +76,7 @@ func runScreensaver(args []string) {
 	}()
 
 	fmt.Print("\033]11;rgb:00/00/00\007")
-	exec.Command("hyprctl", "keyword", "cursor:invisible", "true").Run()
+	hyprEval("hl.config({ cursor = { invisible = true } })")
 
 	renderCmd := exec.Command(nejenSelf(), "screensaver", "render")
 	renderCmd.Stdout = os.Stdout

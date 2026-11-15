@@ -62,18 +62,29 @@ func TestBindLine(t *testing.T) {
 		want string
 	}{
 		{"exec", Bind{Keys: "super+return", Desc: "Terminal", Run: "alacritty"},
-			"bindd = SUPER, RETURN, Terminal, exec, alacritty"},
-		// Commas in a description would be read as extra fields by hyprland.
+			`hl.bind("SUPER + RETURN", hl.dsp.exec_cmd("alacritty"), { desc = "Terminal" })`},
 		{"comma in desc", Bind{Keys: "super+w", Desc: "Close, now", Run: "x"},
-			"bindd = SUPER, w, Close; now, exec, x"},
+			`hl.bind("SUPER + w", hl.dsp.exec_cmd("x"), { desc = "Close, now" })`},
 		{"dispatcher with args", Bind{Keys: "super+h", Desc: "Focus left", Action: "movefocus l"},
-			"bindd = SUPER, h, Focus left, movefocus, l"},
+			`hl.bind("SUPER + h", hl.dsp.focus({ direction = "left" }), { desc = "Focus left" })`},
+		{"move window direction", Bind{Keys: "super+shift+l", Desc: "Move right", Action: "movewindow r"},
+			`hl.bind("SHIFT + SUPER + l", hl.dsp.window.move({ direction = "right" }), { desc = "Move right" })`},
+		{"resize active", Bind{Keys: "super+ctrl+h", Desc: "Shrink width", Action: "resizeactive -60 0", Flags: "e"},
+			`hl.bind("CTRL + SUPER + h", hl.dsp.window.resize({ x = -60, y = 0, relative = true }), { desc = "Shrink width", repeating = true })`},
 		{"bare dispatcher", Bind{Keys: "super+q", Desc: "Close", Action: "killactive"},
-			"bindd = SUPER, q, Close, killactive"},
+			`hl.bind("SUPER + q", hl.dsp.window.close(), { desc = "Close" })`},
+		{"fullscreen modes", Bind{Keys: "super+shift+f", Desc: "Maximize", Action: "fullscreen 1"},
+			`hl.bind("SHIFT + SUPER + f", hl.dsp.window.fullscreen({ mode = "maximized" }), { desc = "Maximize" })`},
+		{"workspace numeric", Bind{Keys: "super+1", Desc: "Workspace 1", Action: "workspace 1"},
+			`hl.bind("SUPER + 1", hl.dsp.focus({ workspace = 1 }), { desc = "Workspace 1" })`},
+		{"workspace named", Bind{Keys: "super+tab", Desc: "Previous workspace", Action: "workspace previous"},
+			`hl.bind("SUPER + TAB", hl.dsp.focus({ workspace = "previous" }), { desc = "Previous workspace" })`},
 		{"flags", Bind{Keys: "XF86PowerOff", Desc: "Session", Run: "nejen hub session", Flags: "l"},
-			"bindld = , XF86PowerOff, Session, exec, nejen hub session"},
+			`hl.bind("XF86PowerOff", hl.dsp.exec_cmd("nejen hub session"), { desc = "Session", locked = true })`},
 		{"mouse bind", Bind{Keys: "super+mouse:272", Desc: "Move", Action: "movewindow", Flags: "m"},
-			"bindm = SUPER, mouse:272, movewindow"},
+			`hl.bind("SUPER + mouse:272", hl.dsp.window.drag(), { desc = "Move", mouse = true })`},
+		{"raw lua dispatcher", Bind{Keys: "super+g", Desc: "Custom", Action: `hl.dsp.layout("togglesplit")`},
+			`hl.bind("SUPER + g", hl.dsp.layout("togglesplit"), { desc = "Custom" })`},
 	}
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {

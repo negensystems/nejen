@@ -45,22 +45,32 @@ func runWinDetach(args []string) {
 		os.Exit(0)
 	}
 
+	winRef := luaQuote("address:" + addr)
 	pinned, _ := window["pinned"].(bool)
 	if pinned {
-		batchCmd := fmt.Sprintf("dispatch pin address:%s; dispatch togglefloating address:%s; dispatch tagwindow -pop address:%s", addr, addr, addr)
-		exec.Command("hyprctl", "-q", "--batch", batchCmd).Run()
+		hyprEval(fmt.Sprintf(
+			`hl.dispatch(hl.dsp.window.pin({ action = "toggle", window = %s })); hl.dispatch(hl.dsp.window.float({ action = "toggle", window = %s })); hl.dispatch(hl.dsp.window.tag({ tag = "-pop", window = %s }))`,
+			winRef, winRef, winRef,
+		))
 		os.Exit(0)
 	}
 
-	exec.Command("hyprctl", "-q", "dispatch", "togglefloating", "address:"+addr).Run()
-	exec.Command("hyprctl", "-q", "dispatch", "resizewindowpixel", fmt.Sprintf("exact %s %s,address:%s", width, height, addr)).Run()
-
+	var steps []string
+	steps = append(steps,
+		fmt.Sprintf(`hl.dispatch(hl.dsp.window.float({ action = "toggle", window = %s }))`, winRef),
+		fmt.Sprintf(`hl.dispatch(hl.dsp.window.resize({ x = %s, y = %s, relative = false, window = %s }))`, luaNumberOrQuote(width), luaNumberOrQuote(height), winRef),
+	)
 	if posX != "" && posY != "" {
-		exec.Command("hyprctl", "-q", "dispatch", "movewindowpixel", fmt.Sprintf("exact %s %s,address:%s", posX, posY, addr)).Run()
+		steps = append(steps, fmt.Sprintf(`hl.dispatch(hl.dsp.window.move({ x = %s, y = %s, relative = false, window = %s }))`, luaNumberOrQuote(posX), luaNumberOrQuote(posY), winRef))
 	} else {
-		exec.Command("hyprctl", "-q", "dispatch", "centerwindow").Run()
+		steps = append(steps, `hl.dispatch(hl.dsp.window.center())`)
 	}
-
-	batchCmd2 := fmt.Sprintf("dispatch pin address:%s; dispatch alterzorder top address:%s; dispatch tagwindow +pop address:%s", addr, addr, addr)
-	exec.Command("hyprctl", "-q", "--batch", batchCmd2).Run()
+	steps = append(steps,
+		fmt.Sprintf(`hl.dispatch(hl.dsp.window.pin({ action = "toggle", window = %s }))`, winRef),
+		fmt.Sprintf(`hl.dispatch(hl.dsp.window.alter_zorder({ mode = "top", window = %s }))`, winRef),
+		fmt.Sprintf(`hl.dispatch(hl.dsp.window.tag({ tag = "+pop", window = %s }))`, winRef),
+	)
+	for _, step := range steps {
+		hyprEval(step)
+	}
 }

@@ -115,7 +115,7 @@ items = [
   { label = "Lock", run = "nejen lock" },
   { label = "Screensaver", run = "nejen screensaver show" },
   { label = "Suspend", run = "systemctl suspend", confirm = true },
-  { label = "Relaunch Hyprland", run = "hyprctl dispatch exit", confirm = true },
+  { label = "Relaunch Hyprland", run = "hyprctl dispatch 'hl.dsp.exit()'", confirm = true },
   { label = "Log out", run = "nejen system logout", confirm = true },
   { label = "Reboot", run = "nejen system reboot", confirm = true },
   { label = "Power off", run = "nejen system shutdown", confirm = true },

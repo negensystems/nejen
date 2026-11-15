@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"os/exec"
 )
 
@@ -17,10 +18,10 @@ func runWinCloseAll(args []string) {
 		if err := json.Unmarshal(out, &clients); err == nil {
 			for _, client := range clients {
 				if addr, ok := client["address"].(string); ok {
-					exec.Command("hyprctl", "-q", "dispatch", "closewindow", "address:"+addr).Run()
+					hyprDispatchLua(fmt.Sprintf("hl.dsp.window.close({ window = %s })", luaQuote("address:"+addr)))
 				}
 			}
 		}
 	}
-	exec.Command("hyprctl", "-q", "dispatch", "workspace", "1").Run()
+	hyprDispatchLua("hl.dsp.focus({ workspace = 1 })")
 }

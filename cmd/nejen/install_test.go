@@ -3,6 +3,7 @@ package main
 import (
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 )
 
@@ -170,6 +171,39 @@ func TestResolveManifestIgnoresWorkingDirectoryCollisions(t *testing.T) {
 
 	if got := resolveManifest("core", source, nejen); got != want {
 		t.Errorf("resolveManifest = %q, want %q -- a stray \"core\" directory hijacked the name", got, want)
+	}
+}
+
+func TestHyprlandLoaderLua(t *testing.T) {
+	got := hyprlandLoaderLua("/opt/nejen")
+	for _, want := range []string{
+		genMark,
+		`nejenPath = "/opt/nejen"`,
+		`dofile(nejenPath .. "/config/hypr/hyprland.lua")`,
+		`configHome .. "/hypr/overrides.lua"`,
+	} {
+		if !strings.Contains(got, want) {
+			t.Errorf("hyprlandLoaderLua output missing %q:\n%s", want, got)
+		}
+	}
+}
+
+func TestHasCustomConfLines(t *testing.T) {
+	dir := t.TempDir()
+	boilerplate := filepath.Join(dir, "empty.conf")
+	if err := os.WriteFile(boilerplate, []byte("# comment only\n\n  # indented\n"), 0644); err != nil {
+		t.Fatal(err)
+	}
+	if hasCustomConfLines(boilerplate) {
+		t.Error("expected comment-only file to report false")
+	}
+
+	custom := filepath.Join(dir, "custom.conf")
+	if err := os.WriteFile(custom, []byte("# comment\nbind = , F4, exec, foo\n"), 0644); err != nil {
+		t.Fatal(err)
+	}
+	if !hasCustomConfLines(custom) {
+		t.Error("expected file with bind directive to report true")
 	}
 }
 
